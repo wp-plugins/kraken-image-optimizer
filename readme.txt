@@ -1,0 +1,56 @@
+=== Kraken Image Optimizer ===
+Contributors: karim79
+Tags: Image Optimizer, Images, Media, Performance
+Requires at least: 3.0.1
+Tested up to: 3.8.1
+Donate link: https://kraken.io
+Stable tag: trunk
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+
+This plugin allows you to optimize all your Wordpress images through the Kraken API
+
+
+== Description ==
+
+This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 8MB. For more details, including detailed documentation, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer").
+
+* All image uploaded throught the media uploader are optimized on-the-fly. All generated thumbnails are optimized too.
+* All images already present in the media library can be optimized individually.
+* This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
+* All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
+* To use this plugin, you must obtain a full API key and secret from [Kraken.io](https://kraken.io "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
+
+
+Once you have obtained your credentials, from your Wordpress admin, go to Settings->Media. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
+
+Please send bug reports, problems, feature requests and so on to support (at) Kraken dot io, or directly to the author of this plugin.
+
+
+== Installation ==
+
+To install the Kraken Wordpress Plugin:
+
+1. Upload `kraken.php` to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Enter your Kraken API key and secret into the new **Kraken.io Settings** section of Settings->Media.
+4. Any images you upload from now on using Wordpress's Media Upload will be optimized according to your settings. Auto-generated thumbnails will also be optimized.
+5. Images already present can be optimized from within the Media Library.
+
+
+== Frequently Asked Questions ==
+
+= Can I test the plugin before I purchase an account from Kraken.io? =
+
+No, you can't. You can, however, directly contact Kraken.io support for a private demonstration, if you like.
+To test the performance and results of Kraken Image Optimizer, you can try the free Web Interface at https://kraken.io/web-interface
+
+
+== Changelog ==
+
+= 1.0 =
+* First version. Supports lossy and lossless optimization of JPG, PNG and GIF (including aniGIF) image formats
+* Hooks to Media Uploader to optimize all uploaded images, including generated thumbnails.
+* Allows optimization of existing images in Wordpress Media Library.
+
