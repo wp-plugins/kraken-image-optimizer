@@ -14,7 +14,9 @@ This plugin allows you to optimize all your Wordpress images through the Kraken 
 
 == Description ==
 
-This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 8MB. For more details, including detailed documentation, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer").
+This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 8MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). **Note: You will need to obtain a full Kraken API key and secret to use this plugin**. 
+
+
 
 * All images uploaded throught the media uploader are optimized on-the-fly. All generated thumbnails are optimized too.
 * All images already present in the media library can be optimized individually.
