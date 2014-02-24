@@ -18,7 +18,7 @@
 
 /*
  * Plugin Name: Kraken Image Optimizer
- * Plugin URI: Not hosted on Wordpress yet
+ * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
  * Author: Karim Salman
  * Version: 1.0
