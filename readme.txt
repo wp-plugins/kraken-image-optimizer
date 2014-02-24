@@ -1,6 +1,6 @@
 === Kraken Image Optimizer ===
 Contributors: karim79
-Tags: Image Optimizer, Images, Media, Performance
+Tags: Image Optimizer, Images, Media, Performance, SEO
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
@@ -16,7 +16,7 @@ This plugin allows you to optimize all your Wordpress images through the Kraken 
 
 This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 8MB. For more details, including detailed documentation, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer").
 
-* All image uploaded throught the media uploader are optimized on-the-fly. All generated thumbnails are optimized too.
+* All images uploaded throught the media uploader are optimized on-the-fly. All generated thumbnails are optimized too.
 * All images already present in the media library can be optimized individually.
 * This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
 * All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
@@ -38,6 +38,10 @@ To install the Kraken Wordpress Plugin:
 4. Any images you upload from now on using Wordpress's Media Upload will be optimized according to your settings. Auto-generated thumbnails will also be optimized.
 5. Images already present can be optimized from within the Media Library.
 
+== Screenshots ==
+
+1. This screenshot shows the new section which this plugin to Settings->Media. You must enter your credentials, and select your optimization mode from there, then hit **save**.
+2. This screenshot shows the two columns added by Kraken Image Optimizer: **original image** and **Kraked size**, as well as the new **Optimize This Image** button which is present for images which already exist in your media library. Stats and optimization type are shown for optimized images.
 
 == Frequently Asked Questions ==
 
