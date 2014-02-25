@@ -1,10 +1,10 @@
 === Kraken Image Optimizer ===
 Contributors: karim79
-Tags: Image Optimizer, Images, Media, Performance, SEO
+Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compress, kraken-image-optimizer
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
-Stable tag: trunk
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ This plugin allows you to optimize all your Wordpress images through the Kraken 
 
 == Description ==
 
-This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 8MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). **Note: You will need to obtain a full Kraken API key and secret to use this plugin**. 
+This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 8MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). **Note: You will need to obtain a paid Kraken API key and secret to use this plugin**. 
 
 
 
@@ -59,4 +59,7 @@ To test the performance and results of Kraken Image Optimizer, you can try the f
 * First version. Supports lossy and lossless optimization of JPG, PNG and GIF (including aniGIF) image formats
 * Hooks to Media Uploader to optimize all uploaded images, including generated thumbnails.
 * Allows optimization of existing images in Wordpress Media Library.
+
+= 1.0.1 =
+* Minor cleanup release.
 
