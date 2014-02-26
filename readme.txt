@@ -59,7 +59,7 @@ To test the performance and results of Kraken Image Optimizer, you can try the f
 
 = Where can I purchase an API key and secret? =
 
-From our plans page, right [here: ](https://kraken.io/plans "Kraken.io plans and pricing"). In addition to being able to use our Wordpress Plugin, you can also use the API in your own applications, and take advantage of our [Web Interface PRO ](https://kraken.io/pro "Kraken Web Interface PRO") feature.
+From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and pricing"). In addition to being able to use our Wordpress Plugin, you can also use the API in your own applications, and take advantage of our [Web Interface PRO ](https://kraken.io/pro "Kraken Web Interface PRO") feature.
 
 
 == Changelog ==
