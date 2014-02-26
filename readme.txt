@@ -22,7 +22,7 @@ This plugin allows you to optimize new and existing Wordpress image uploads thro
 * All images already present in the media library can be optimized individually.
 * This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
 * All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
-* To use this plugin, you must obtain a full API key and secret from [Kraken.io](https://kraken.io "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
+* To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
 
 
 Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
