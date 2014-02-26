@@ -29,6 +29,11 @@ Once you have obtained your credentials, from your Wordpress admin, go to Settin
 
 Please send bug reports, problems, feature requests and so on to support (at) Kraken dot io, or directly to the author of this plugin.
 
+= Connect with Kraken.io =
+* [Website: ](https://kraken.io "Kraken Image Optimizer")
+* [Twitter: ](https://twitter.com/KrakenIO "@KrakenIO")
+* [Google+: ](https://plus.google.com/107209047753760492207/ "Google+")
+* [Facebook: ](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
 
 == Installation ==
 
@@ -45,12 +50,6 @@ To install the Kraken Wordpress Plugin:
 1. This screenshot shows the new section which this plugin to Settings->Media. You must enter your credentials, and select your optimization mode from there, then hit **save**.
 2. This screenshot shows the two columns added by Kraken Image Optimizer: **original image** and **Kraked size**, as well as the new **Optimize This Image** button which is present for images which already exist in your media library. Stats and optimization type are shown for optimized images.
 
-== Connect with Kraken.io ==
-* [Website: ](https://kraken.io "Kraken Image Optimizer")
-* [Twitter: ](https://twitter.com/KrakenIO "@KrakenIO")
-* [Google+: ](https://plus.google.com/107209047753760492207/ "Google+")
-* [Facebook: ](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
-
 == Frequently Asked Questions ==
 
 = Can I test the plugin before I purchase an account from Kraken.io? =
@@ -58,7 +57,7 @@ To install the Kraken Wordpress Plugin:
 No, you can't. You can, however, directly contact Kraken.io support for a private demonstration, if you like.
 To test the performance and results of Kraken Image Optimizer, you can try the free Web Interface at https://kraken.io/web-interface
 
-= Where can I purchase an API key and secret?
+= Where can I purchase an API key and secret? =
 
 From our plans page, right [here: ](https://kraken.io/plans "Kraken.io plans and pricing"). In addition to being able to use our Wordpress Plugin, you can also use the API in your own applications, and take advantage of our [Web Interface PRO ](https://kraken.io/pro "Kraken Web Interface PRO") feature.
 
