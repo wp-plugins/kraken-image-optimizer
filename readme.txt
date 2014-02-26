@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compr
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -45,12 +45,22 @@ To install the Kraken Wordpress Plugin:
 1. This screenshot shows the new section which this plugin to Settings->Media. You must enter your credentials, and select your optimization mode from there, then hit **save**.
 2. This screenshot shows the two columns added by Kraken Image Optimizer: **original image** and **Kraked size**, as well as the new **Optimize This Image** button which is present for images which already exist in your media library. Stats and optimization type are shown for optimized images.
 
+== Connect with Kraken.io ==
+* [Website: ](https://kraken.io "Kraken Image Optimizer")
+* [Twitter: ](https://twitter.com/KrakenIO "@KrakenIO")
+* [Google+: ](https://plus.google.com/107209047753760492207/ "Google+")
+* [Facebook: ](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
+
 == Frequently Asked Questions ==
 
 = Can I test the plugin before I purchase an account from Kraken.io? =
 
 No, you can't. You can, however, directly contact Kraken.io support for a private demonstration, if you like.
 To test the performance and results of Kraken Image Optimizer, you can try the free Web Interface at https://kraken.io/web-interface
+
+= Where can I purchase an API key and secret?
+
+From our plans page, right [here: ](https://kraken.io/plans "Kraken.io plans and pricing"). In addition to being able to use our Wordpress Plugin, you can also use the API in your own applications, and take advantage of our [Web Interface PRO ](https://kraken.io/pro "Kraken Web Interface PRO") feature.
 
 
 == Changelog ==
@@ -62,4 +72,12 @@ To test the performance and results of Kraken Image Optimizer, you can try the f
 
 = 1.0.1 =
 * Minor cleanup release.
+
+= 1.0.2 =
+* Thumbnails are now optimized when triggering an image optimization from within the media library.
+* Number of Kraked thumbnails is now shown in media library in "Kraked Size" column.
+* "Failed! Hover here" error notification does not persist where an image was not optimized. It goes away after page refresh.
+* Optimize Image button no longer shown for incompatible media types.
+* Information about thumbnail optimization is persisted for future fun-stats page/widget.
+* Minor CSS tweaks.
 

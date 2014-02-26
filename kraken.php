@@ -36,6 +36,8 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $kraken_settings = array();
 
+		private $thumbs_data = array();
+
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
 			require_once( $plugin_dir_path . '/lib/Kraken.php' );
@@ -130,30 +132,26 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		function kraken_media_library_ajax_callback() {
 
 			$image_id = (int) $_POST['id'];
+			$this->id = $image_id;
 
 			if ( wp_attachment_is_image( $image_id ) ) {	
 
 				$imageUrl = wp_get_attachment_url( $image_id );
 				$image_path = get_attached_file( $image_id );
-
 				$settings = $this->kraken_settings;
-
 				$api_key = isset( $settings['api_key'] ) ? $settings['api_key'] : '';
 				$api_secret = isset( $settings['api_secret'] ) ? $settings['api_secret'] : '';
 
 				$status = $this->get_api_status( $api_key, $api_secret );
-	
 
 				if ( $status === false ) {
-
-					// TODO: Update older error messages stored in WP Post Meta
 					$kv['error'] = 'There is a problem with your credentials. Please check them in the Kraken.io settings section of Media Settings, and try again.';
 					update_post_meta( $image_id, '_kraken_size', $kv );
 					echo json_encode( array( 'error' => $kv['error'] ) );
 					exit;
 				}
 				
-				if ( isset($status['active']) && $status['active'] === true ) {
+				if ( isset( $status['active'] ) && $status['active'] === true ) {
 
 				} else {
 					echo json_encode( array( 'error' => 'Your API is inactive. Please visit your account settings' ) );
@@ -176,7 +174,20 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					$kv['meta'] = wp_get_attachment_metadata( $image_id );
 
 					if ( $this->replace_image( $image_path, $kraked_url ) ) {
-						update_post_meta( $image_id, '_kraken_size', $kv );	
+						
+						// get metadata for thumbnails
+						$image_data = wp_get_attachment_metadata( $image_id );
+						$this->optimize_thumbnails( $image_data );
+
+						// store kraked info to DB
+						update_post_meta( $image_id, '_kraken_size', $kv );
+
+						// krak thumbnails, store that data too
+						$kraked_thumbs_data = get_post_meta( $image_id, '_kraked_thumbs', true );
+						if ( !empty( $kraked_thumbs_data ) ) {
+							$kv['thumbs_data'] = $kraked_thumbs_data;
+						}
+
 						echo json_encode( $kv );
 					}
 				} else {
@@ -348,23 +359,34 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			echo $html;  
 		}
 				
+		function add_media_columns( $columns ) {
+			$columns['original_size'] = 'Original Size';
+			$columns['kraken_size'] = 'Kraked Size';
+			return $columns;
+		}
+
 		function fill_media_columns( $column_name, $id ) {
-			
+
 			$original_size = filesize( get_attached_file( $id ) );
 			$original_size = self::pretty_kb( $original_size );
-			switch ( $column_name ) {
-				case 'original_size' :
-					$meta = get_post_meta($id, '_kraken_size', true);
+			
+			if ( strcmp( $column_name, 'original_size' ) === 0 ) {
+				if ( wp_attachment_is_image( $id ) ) {	
+
+					$meta = get_post_meta( $id, '_kraken_size', true );
 
 					if ( isset( $meta['original_size'] ) ) {
 						echo $meta['original_size'];
 					} else {
 						echo $original_size;
 					}
+				} else {
+					echo $original_size;
+				}
+			} else {
 
-				break;
+				if ( wp_attachment_is_image( $id ) ) {	
 
-				case 'kraken_size' :
 					$meta = get_post_meta($id, '_kraken_size', true);
 
 					// Is it optimized? Show some stats
@@ -373,29 +395,29 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 						$type = $meta['type'];
 						$savings_percentage = $meta['savings_percent'];
 						echo '<strong>' . $kraked_size .'</strong><br /><small>Type:&nbsp;' . $type . '</small><br /><small>Savings:&nbsp;' . $savings_percentage . '</small>';
-					
+						
+						$thumbs_data = get_post_meta( $id, '_kraked_thumbs', true );
+						$thumbs_count = count( $thumbs_data );
+
+						if ( !empty( $thumbs_data ) ) {
+							echo '<br /><small>' . $thumbs_count . ' thumbs optimized' . '</small>';
+						}
+
 					// Were there no savings, or was there an error?
 					} else {
 						echo '<div class="buttonWrap"><button type="button" class="kraken_req" data-id="' . $id . '" id="krakenid-' . $id .'">Optimize This Image</button><span class="krakenSpinner"></span></div>';
 						
-						if ( isset( $meta['error'] ) ) {
+						if ( !empty( $meta['no_savings'] ) ) {
+							echo '<div class="noSavings"><strong>No savings found</strong><br /><small>Type:&nbsp;' . $meta['type'] . '</small></div>';
+						} else if ( isset( $meta['error'] ) ) {
 							$error = $meta['error'];
 							echo '<div class="krakenErrorWrap"><a class="krakenError" title="' . $error . '">Failed! Hover here</a></div>';
 						}
-
-						if ( !empty( $meta['no_savings'] ) ) {
-							echo '<div class="noSavings"><strong>No savings found</strong><br /><small>Type:&nbsp;' . $meta['type'] . '</small></div>';
-						}
-
 					}
-				break;
+				} else {
+					echo 'n/a';
+				}
 			}
-		}
-
-		function add_media_columns( $columns ) {
-			$columns['original_size'] = 'Original Size';
-			$columns['kraken_size'] = 'Kraked Size';
-			return $columns;
 		}
 		
 		function replace_image($image_path, $kraked_url) {
@@ -439,7 +461,8 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$upload_dir = wp_upload_dir();
 			$upload_path = $upload_dir['path'];
 			$upload_url = $upload_dir['url'];
-			
+			$sizes = array();
+
 			if ( isset( $image_data['sizes'] ) ) {
 				$sizes = $image_data['sizes'];
 			}
@@ -449,7 +472,10 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				$thumb_url = '';
 				$thumb_path = '';
 
-				foreach ( $sizes as $size ) {
+				$thumbs_optimized_store = array();
+				$this_thumb = array();
+
+				foreach ( $sizes as $key => $size ) {
 					
 					$thumb_path = $upload_path . '/' . $size['file'];
 					$thumb_url = $upload_url . '/' . $size['file'];
@@ -460,12 +486,14 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 						if ( !empty($result) && isset($result['success']) && isset( $result['kraked_url'] ) ) {
 							$kraked_url = $result["kraked_url"];
 							if ( $this->replace_image( $thumb_path, $kraked_url ) ) {
-								// file written successfully
+								$this_thumb = array( 'thumb' => $key, 'file' => $size['file'], 'original_size' => $result['original_size'], 'kraked_size' => $result['kraked_size'] );
+								$thumbs_optimized_store [] = $this_thumb; 
 							}
 						}
 					}					
 				}
 			}
+			update_post_meta( $image_id, '_kraked_thumbs', $thumbs_optimized_store, false );
 			return $image_data;
 		}
 

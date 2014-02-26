@@ -70,11 +70,16 @@ jQuery(document).ready(function ($) {
 			,	krakedSize = data.kraked_size
 			,	originalSize = data.original_size
 			,	savingsPercent = data.savings_percent
-			,	$originalSizeColumn = $(this).parent().prev("td.original_size");
+			,	$originalSizeColumn = $(this).parent().prev("td.original_size")
+			,	krakedData = '';
 
 			$parent.fadeOut("fast", function () {
 				$cell.find(".noSavings, .krakenErrorWrap").remove();
-				$(this).replaceWith('<strong>' + krakedSize + '</strong><br /><small>Type:&nbsp;' + type + '</small><br /><small>Savings: ' + savingsPercent + '</small>');
+				krakedData = '<strong>' + krakedSize + '</strong><br /><small>Type:&nbsp;' + type + '</small><br /><small>Savings: ' + savingsPercent + '</small>';
+				if (typeof data.thumbs_data !== 'undefined') {
+					krakedData += '<br /><small>' + data.thumbs_data.length + ' thumbs optimized</small>';
+				}
+				$(this).replaceWith(krakedData);
 				$originalSizeColumn.html(originalSize);
 				$parent.remove();
 			});
@@ -142,6 +147,7 @@ jQuery(document).ready(function ($) {
 			data: data,
 			type: "post",
 			dataType: "json",
+			timeout: 60000,
 			context: $button
 		})
 

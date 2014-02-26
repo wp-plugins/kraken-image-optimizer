@@ -54,6 +54,7 @@
 }
 .buttonWrap {
 	position: relative;
+	margin-bottom: 5px;
 }
 .apiValid {
 	left: 0;
