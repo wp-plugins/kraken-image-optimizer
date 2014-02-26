@@ -33,7 +33,7 @@ Please send bug reports, problems, feature requests and so on to support (at) Kr
 * Website: https://kraken.io
 * [Twitter](https://twitter.com/KrakenIO "@KrakenIO")
 * [Google+](https://plus.google.com/107209047753760492207/ "Google+")
-* [Facebook](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
+* [Facebook](https://www.facebook.com/krakenio "Kraken Image Optimizer")
 
 == Installation ==
 
