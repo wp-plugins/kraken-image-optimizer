@@ -25,15 +25,15 @@ This plugin allows you to optimize new and existing Wordpress image uploads thro
 * To use this plugin, you must obtain a full API key and secret from [Kraken.io](https://kraken.io "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
 
 
-Once you have obtained your credentials, from your Wordpress admin, go to Settings->Media. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
+Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
 
 Please send bug reports, problems, feature requests and so on to support (at) Kraken dot io, or directly to the author of this plugin.
 
 = Connect with Kraken.io =
-* [Website: ](https://kraken.io "Kraken Image Optimizer")
-* [Twitter: ](https://twitter.com/KrakenIO "@KrakenIO")
-* [Google+: ](https://plus.google.com/107209047753760492207/ "Google+")
-* [Facebook: ](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
+* Website: https://kraken.io
+* [Twitter](https://twitter.com/KrakenIO "@KrakenIO")
+* [Google+](https://plus.google.com/107209047753760492207/ "Google+")
+* [Facebook](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
 
 == Installation ==
 
