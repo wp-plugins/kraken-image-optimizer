@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compr
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
-Stable tag: 1.0.2
+Stable tag: 1.0.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -79,4 +79,9 @@ From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and p
 * Optimize Image button no longer shown for incompatible media types.
 * Information about thumbnail optimization is persisted for future fun-stats page/widget.
 * Minor CSS tweaks.
+
+= 1.0.2.1 =
+* Fixed bug which led to kraked file not being retrieved in rare cases.
+* Increase ajax timeout for media library inline kraking to be kinder to slower WordPress blogs.
+
 

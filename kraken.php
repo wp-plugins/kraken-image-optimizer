@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
  * Author: Karim Salman
- * Version: 1.0.2
- * Stable Tag: 1.0.2
+ * Version: 1.0.2.1
+ * Stable Tag: 1.0.2.1
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -420,23 +420,16 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			}
 		}
 		
-		function replace_image($image_path, $kraked_url) {
-
+		function replace_image( $image_path, $kraked_url ) {
 			$rv = false;
-			if( ini_get( 'allow_url_fopen' ) ) {
-
-   				$rv = file_put_contents( $image_path, file_get_contents($kraked_url) );
-			
-			} else if ( function_exists('curl_version') ) {
-
-				$ch =  curl_init( $kraked_url );
-				curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-				$result = curl_exec($ch);
-			}		
+			$ch =  curl_init( $kraked_url );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+			$result = curl_exec( $ch );
+			$rv = file_put_contents( $image_path, $result );
 			return $rv !== false;
 		}
 
-		function optimize_image($url) {
+		function optimize_image( $url ) {
 
 			$settings = $this->kraken_settings;
 			$kraken = new Kraken($settings['api_key'], $settings['api_secret']);
@@ -455,7 +448,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			return $data;
 		}
 
-		function optimize_thumbnails($image_data) {
+		function optimize_thumbnails( $image_data ) {
 
 			$image_id = $this->id;
 			$upload_dir = wp_upload_dir();
