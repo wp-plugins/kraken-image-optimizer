@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compr
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
-Stable tag: 1.0.2
+Stable tag: 1.0.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -22,13 +22,18 @@ This plugin allows you to optimize new and existing Wordpress image uploads thro
 * All images already present in the media library can be optimized individually.
 * This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
 * All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
-* To use this plugin, you must obtain a full API key and secret from [Kraken.io](https://kraken.io "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
+* To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
 
 
-Once you have obtained your credentials, from your Wordpress admin, go to Settings->Media. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
+Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
 
 Please send bug reports, problems, feature requests and so on to support (at) Kraken dot io, or directly to the author of this plugin.
 
+= Connect with Kraken.io =
+* Website: https://kraken.io
+* [Twitter](https://twitter.com/KrakenIO "@KrakenIO")
+* [Google+](https://plus.google.com/107209047753760492207/ "Google+")
+* [Facebook](https://www.facebook.com/krakenio "Kraken Image Optimizer")
 
 == Installation ==
 
@@ -45,12 +50,6 @@ To install the Kraken Wordpress Plugin:
 1. This screenshot shows the new section which this plugin to Settings->Media. You must enter your credentials, and select your optimization mode from there, then hit **save**.
 2. This screenshot shows the two columns added by Kraken Image Optimizer: **original image** and **Kraked size**, as well as the new **Optimize This Image** button which is present for images which already exist in your media library. Stats and optimization type are shown for optimized images.
 
-== Connect with Kraken.io ==
-* [Website: ](https://kraken.io "Kraken Image Optimizer")
-* [Twitter: ](https://twitter.com/KrakenIO "@KrakenIO")
-* [Google+: ](https://plus.google.com/107209047753760492207/ "Google+")
-* [Facebook: ](https://www.facebook.com/krakenio, "Kraken Image Optimizer")
-
 == Frequently Asked Questions ==
 
 = Can I test the plugin before I purchase an account from Kraken.io? =
@@ -58,9 +57,9 @@ To install the Kraken Wordpress Plugin:
 No, you can't. You can, however, directly contact Kraken.io support for a private demonstration, if you like.
 To test the performance and results of Kraken Image Optimizer, you can try the free Web Interface at https://kraken.io/web-interface
 
-= Where can I purchase an API key and secret?
+= Where can I purchase an API key and secret? =
 
-From our plans page, right [here: ](https://kraken.io/plans "Kraken.io plans and pricing"). In addition to being able to use our Wordpress Plugin, you can also use the API in your own applications, and take advantage of our [Web Interface PRO ](https://kraken.io/pro "Kraken Web Interface PRO") feature.
+From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and pricing"). In addition to being able to use our Wordpress Plugin, you can also use the API in your own applications, and take advantage of our [Web Interface PRO ](https://kraken.io/pro "Kraken Web Interface PRO") feature.
 
 
 == Changelog ==
@@ -80,4 +79,9 @@ From our plans page, right [here: ](https://kraken.io/plans "Kraken.io plans and
 * Optimize Image button no longer shown for incompatible media types.
 * Information about thumbnail optimization is persisted for future fun-stats page/widget.
 * Minor CSS tweaks.
+
+= 1.0.2.1 =
+* Fixed bug which led to kraked file not being retrieved in rare cases.
+* Increase ajax timeout for media library inline kraking to be kinder to slower WordPress blogs.
+
 

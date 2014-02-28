@@ -147,7 +147,7 @@ jQuery(document).ready(function ($) {
 			data: data,
 			type: "post",
 			dataType: "json",
-			timeout: 60000,
+			timeout: 120000,
 			context: $button
 		})
 
