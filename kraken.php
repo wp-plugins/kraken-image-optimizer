@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
  * Author: Karim Salman
- * Version: 1.0.3.1
- * Stable Tag: 1.0.3.1
+ * Version: 1.0.3.2
+ * Stable Tag: 1.0.3.2
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -38,7 +38,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $thumbs_data = array();
 
-		private $optimization_type = '';
+		private $optimization_type = 'lossy';
 
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
@@ -523,7 +523,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 						if ( !empty($result) && isset($result['success']) && isset( $result['kraked_url'] ) ) {
 							$kraked_url = $result["kraked_url"];
 							if ( $this->replace_image( $thumb_path, $kraked_url ) ) {
-								$this_thumb = array( 'thumb' => $key, 'file' => $size['file'], 'original_size' => $result['original_size'], 'kraked_size' => $result['kraked_size'], 'type' => $optimization_type );
+								$this_thumb = array( 'thumb' => $key, 'file' => $size['file'], 'original_size' => $result['original_size'], 'kraked_size' => $result['kraked_size'], 'type' => $this->optimization_type );
 								$thumbs_optimized_store [] = $this_thumb; 
 							}
 						}

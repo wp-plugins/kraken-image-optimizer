@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compr
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
-Stable tag: 1.0.3.1
+Stable tag: 1.0.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -98,5 +98,8 @@ From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and p
 = 1.0.3.1 =
 * When using the Regenerate Thumbnails plugin with kraked images, meta data is now correctly updated per image.
 * Optimization mode (lossy/lossless) is now stored with kraken thumbnail metadata (for future Stats page).
+
+= 1.0.3.2 =
+* Fixed bug related to storing optimized thumbnails metadata.
 
 
