@@ -34,7 +34,7 @@
 	float: left;
 	clear: left;
 }
-.kraken_req {
+.kraken_req, .kraken_req_bulk {
 	border: 1px solid #efab00;
 	color: #222;
 	padding: 3px 8px 4px;
@@ -51,6 +51,9 @@
 	border-radius: 2px;
 	cursor: pointer;
 	font-weight: bold;
+}
+.kraken_req_bulk {
+	font-size: 16px;
 }
 .buttonWrap {
 	position: relative;
@@ -85,6 +88,17 @@ p.apiStatus {
 	top: 5px;
 	background: url('https://kraken.r.worldssl.net/assets/images/spinner.gif') no-repeat 0 0;
 }
+.krakenBulkSpinner {
+	display: none;
+	padding: 0;
+	margin: 0;
+	width: 16px;
+	height: 16px;
+	background: url('https://kraken.r.worldssl.net/assets/images/spinner.gif') no-repeat 0 0;
+}
+.visible {
+	display: inline-block;
+}
 .krakenErrorWrap {
 	margin-top: 10px;
 	margin-bottom: 4px;
@@ -96,4 +110,58 @@ p.apiStatus {
 	margin-left: 2px;
 	font-weight: bold;
 	color: #dd3d36;
+}
+.krakenBulkHeader {
+	font-size: 16px;
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+#kraken-bulk-modal {
+	position: absolute !important;
+	top: 100px;	
+	width: 785px;
+}
+#kraken-bulk-modal label {
+	margin-bottom: 11px;
+}
+#kraken-bulk {
+	width: 780px;	
+	margin: 0 auto;
+	margin-bottom: 10px;	
+	border-spacing: 1px;
+	border-collapse: separate;
+}
+.kraken-bulk-header td {
+	font-weight: bold;
+	font-size: 14px;
+	padding: 4px 0 4px 2px;
+}
+td.kraken-krakedsize {
+	text-align: left;
+}
+tr.kraken-item-row td {
+	padding: 2px;
+	height: 20px;
+}
+span.kraken-bulk-choose-type {
+	font-weight: bold;
+	margin-right: 5px;
+}
+#kraken-bulk-type-lossy {
+	margin-right: 5px;
+}
+.close-kraken-bulk {
+	font-size: 12px;
+	margin-left: 10px;
+	font-weight: bold;
+	cursor: pointer;
+}
+.radiosWrap {
+	display: inline-block;
+	margin: 0 0 5px 4px;
+}
+.kraken-bulk-small {
+	font-size: 12px;
+	display: inline-block;
+	margin: 0 0 4px 4px;
 }
