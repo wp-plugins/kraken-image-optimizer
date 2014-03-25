@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compr
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Donate link: https://kraken.io
-Stable tag: 1.0.3
+Stable tag: 1.0.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ This plugin allows you to optimize new and existing Wordpress image uploads thro
 
 Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
 
-Features on the way:
+= Features on the way =
 * Optimize images directly to Amazon S3.
 * Optimize entire media library in one click.
 * Optimize your currently active theme.
@@ -95,5 +95,8 @@ From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and p
 * Fixed a bug which caused old images' thumbnails to not be optimized.
 * Fixed a failure condition which occured only on WPEngine-hosted systems.
 
+= 1.0.3.1 =
+* When using the Regenerate Thumbnails plugin with kraked images, meta data is now correctly updated per image.
+* Optimization mode (lossy/lossless) is now stored with kraken thumbnail metadata (for future Stats page).
 
 
