@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
  * Author: Karim Salman
- * Version: 1.0.2.1
- * Stable Tag: 1.0.2.1
+ * Version: 1.0.3
+ * Stable Tag: 1.0.3
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -101,10 +101,14 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		function my_enqueue( $hook ) {
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'tipsy-js', plugins_url( '/js/jquery.tipsy.js', __FILE__ ), array( 'jquery' ) );
+			wp_enqueue_script( 'async-js', plugins_url( '/js/async.js', __FILE__ ) );
 			wp_enqueue_script( 'ajax-script', plugins_url( '/js/ajax.js', __FILE__ ), array( 'jquery' ) );
 			wp_enqueue_style( 'kraken_admin_style', plugins_url( 'css/admin.css', __FILE__ ) );
-			wp_enqueue_style( 'tipsy_style', plugins_url( 'css/tipsy.css', __FILE__ ) );
+			wp_enqueue_style( 'tipsy-style', plugins_url( 'css/tipsy.css', __FILE__ ) );
+			wp_enqueue_style( 'modal-style', plugins_url( 'css/jquery.modal.css', __FILE__ ) );
 			wp_localize_script( 'ajax-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+			wp_enqueue_script( 'modal-js', plugins_url( '/js/jquery.modal.min.js', __FILE__ ), array( 'jquery' ) );
+
 		}
 
 		function get_api_status( $api_key, $api_secret ) {
@@ -130,8 +134,13 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		 *  Handles optimizing already-uploaded images in the  Media Library
 		 */
 		function kraken_media_library_ajax_callback() {
-
+			
 			$image_id = (int) $_POST['id'];
+			$type = false;
+			if ( isset( $_POST['type'] ) ) {
+				$type = $_POST['type'];
+			}
+			
 			$this->id = $image_id;
 
 			if ( wp_attachment_is_image( $image_id ) ) {	
@@ -158,7 +167,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					die();
 				}
 				
-				$result = $this->optimize_image( $imageUrl );
+				$result = $this->optimize_image( $imageUrl, $type );
 				$kv = array();
 
 				if ( $result['success'] == true && !isset( $result['error'] ) ) {
@@ -177,7 +186,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 						
 						// get metadata for thumbnails
 						$image_data = wp_get_attachment_metadata( $image_id );
-						$this->optimize_thumbnails( $image_data );
+						$this->optimize_thumbnails( $image_data, $type );
 
 						// store kraked info to DB
 						update_post_meta( $image_id, '_kraken_size', $kv );
@@ -189,6 +198,9 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 						}
 
 						echo json_encode( $kv );
+					} else {
+						echo json_encode( array( 'error' => 'Could not overwrite original file. Please ensure that your files are writable by plugins.' ) );
+						exit;
 					}
 				} else {
 
@@ -219,14 +231,15 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		 *  Handles optimizing images uploaded through any of the media uploaders.
 		 */
 		function kraken_media_uploader_callback( $image_id ) {
-
 			$this->id = $image_id;
 
 			if ( wp_attachment_is_image( $image_id ) ) {	
 
+				$settings = $this->kraken_settings;
+				$type = $settings['api_lossy'];
 				$imageUrl = wp_get_attachment_url( $image_id );
 				$image_path = get_attached_file( $image_id );
-				$result = $this->optimize_image( $imageUrl );
+				$result = $this->optimize_image( $imageUrl, $type );
 
 				if ( $result['success'] == true && !isset( $result['error'] ) ) {
 
@@ -267,6 +280,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				}
 			}
 		}	
+
 
 		function show_credentials_validity() {
 
@@ -361,7 +375,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				
 		function add_media_columns( $columns ) {
 			$columns['original_size'] = 'Original Size';
-			$columns['kraken_size'] = 'Kraked Size';
+			$columns['kraked_size'] = 'Kraked Size';
 			return $columns;
 		}
 
@@ -370,6 +384,10 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$original_size = filesize( get_attached_file( $id ) );
 			$original_size = self::pretty_kb( $original_size );
 			
+			$options = get_option( '_kraken_options' );
+			$type = isset( $options['api_lossy'] ) ? $options['api_lossy'] : 'lossy';
+
+
 			if ( strcmp( $column_name, 'original_size' ) === 0 ) {
 				if ( wp_attachment_is_image( $id ) ) {	
 
@@ -383,7 +401,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				} else {
 					echo $original_size;
 				}
-			} else {
+			} else if ( strcmp( $column_name, 'kraked_size' ) === 0 ) {
 
 				if ( wp_attachment_is_image( $id ) ) {	
 
@@ -405,8 +423,9 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 					// Were there no savings, or was there an error?
 					} else {
-						echo '<div class="buttonWrap"><button type="button" class="kraken_req" data-id="' . $id . '" id="krakenid-' . $id .'">Optimize This Image</button><span class="krakenSpinner"></span></div>';
-						
+						$image_url = wp_get_attachment_url( $id );
+						$filename = basename( $image_url );
+						echo '<div class="buttonWrap"><button data-setting="' . $type . '" type="button" class="kraken_req" data-id="' . $id . '" id="krakenid-' . $id .'" data-filename="' . $filename . '" data-url="' . $image_url . '">Optimize This Image</button><span class="krakenSpinner"></span></div>';
 						if ( !empty( $meta['no_savings'] ) ) {
 							echo '<div class="noSavings"><strong>No savings found</strong><br /><small>Type:&nbsp;' . $meta['type'] . '</small></div>';
 						} else if ( isset( $meta['error'] ) ) {
@@ -429,13 +448,16 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			return $rv !== false;
 		}
 
-		function optimize_image( $url ) {
+		function optimize_image( $url, $type ) {
 
 			$settings = $this->kraken_settings;
-			$kraken = new Kraken($settings['api_key'], $settings['api_secret']);
+			$kraken = new Kraken( $settings['api_key'], $settings['api_secret'] );
 
-			$lossy = $settings['api_lossy'] === "lossy";
-
+			if ( !empty( $type ) ) {
+				$lossy = $type === 'lossy';
+			} else {
+				$lossy = $settings['api_lossy'] === "lossy";
+			}
 			$params = array(
 				"url" => $url,
 				"wait" => true,
@@ -443,17 +465,36 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			);
 
 			$data = $kraken->url( $params );
-			$data['type'] = $settings['api_lossy'];
+			$data['type'] = !empty( $type ) ? $type : $settings['api_lossy'];
 			
 			return $data;
 		}
 
-		function optimize_thumbnails( $image_data ) {
+		function optimize_thumbnails( $image_data, $type = 'lossy' ) {
+
+			if ( empty( $type ) ) {
+				$settings = $this->kraken_settings;
+				$optimizationType = $settings['api_lossy'];
+			} else {
+				$optimizationType = $type;
+			}
 
 			$image_id = $this->id;
-			$upload_dir = wp_upload_dir();
-			$upload_path = $upload_dir['path'];
-			$upload_url = $upload_dir['url'];
+			$path_parts = pathinfo( $image_data['file'] );
+
+			// e.g. 04/02, for use in getting correct path or URL
+			$upload_subdir = $path_parts['dirname'];
+
+			$upload_dir = wp_upload_dir();			
+			
+			// all the way up to /uploads
+			$upload_base_path = $upload_dir['basedir'];
+			$upload_full_path = $upload_base_path . '/' . $upload_subdir;
+
+			// all the way up to /uploads
+			$upload_base_url = $upload_dir['baseurl'];
+			$upload_url = $upload_base_url . '/' . $upload_subdir;
+			
 			$sizes = array();
 
 			if ( isset( $image_data['sizes'] ) ) {
@@ -470,11 +511,11 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 				foreach ( $sizes as $key => $size ) {
 					
-					$thumb_path = $upload_path . '/' . $size['file'];
+					$thumb_path = $upload_full_path . '/' . $size['file'];
 					$thumb_url = $upload_url . '/' . $size['file'];
 			
 					if ( file_exists( $thumb_path ) !== false ) {
-						$result = $this->optimize_image( $thumb_url );
+						$result = $this->optimize_image( $thumb_url, $optimizationType );
 			
 						if ( !empty($result) && isset($result['success']) && isset( $result['kraked_url'] ) ) {
 							$kraked_url = $result["kraked_url"];
@@ -486,7 +527,9 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					}					
 				}
 			}
-			update_post_meta( $image_id, '_kraked_thumbs', $thumbs_optimized_store, false );
+			if ( !empty( $thumbs_optimized_store ) ) {
+				update_post_meta( $image_id, '_kraked_thumbs', $thumbs_optimized_store, false );	
+			}
 			return $image_data;
 		}
 
