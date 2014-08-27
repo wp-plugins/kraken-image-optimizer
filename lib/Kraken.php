@@ -18,7 +18,7 @@ class Kraken
     public function url($opts = array())
     {
         $data = json_encode(array_merge($this->auth, $opts));
-        $response = self::request($data, "https://api.kraken.io/v1/url");
+        $response = self::request($data, "https://api-worker-5.kraken.io/v1/url");
 
         return $response;
     }
@@ -78,11 +78,15 @@ class Kraken
     private function request($data, $url)
     {
         $curl = curl_init();
-
+        
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 0); 
+        curl_setopt($curl, CURLOPT_TIMEOUT, 400);        
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);      
         curl_setopt($curl, CURLOPT_FAILONERROR, 1);
 
         $response = json_decode(curl_exec($curl), true);
