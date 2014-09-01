@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
  * Author: Karim Salman
- * Version: 1.0.3.4
- * Stable Tag: 1.0.3.4
+ * Version: 1.0.4
+ * Stable Tag: 1.0.4
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -149,13 +149,6 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 			if ( wp_attachment_is_image( $image_id ) ) {
 
-				$imageUrl = wp_get_attachment_url( $image_id );
-
-				// fix for blogs with nasty plugins which convert URLs to relative paths
-				if ( filter_var( $imageUrl, FILTER_VALIDATE_URL ) === false ) {
-				    $imageUrl = get_site_url() . $imageUrl;
-				}
-
 				$image_path = get_attached_file( $image_id );
 				$settings = $this->kraken_settings;
 				$api_key = isset( $settings['api_key'] ) ? $settings['api_key'] : '';
@@ -177,7 +170,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					die();
 				}
 
-				$result = $this->optimize_image( $imageUrl, $type );
+				$result = $this->optimize_image( $image_path, $type );
 
 				if ( $result['success'] == true && !isset( $result['error'] ) ) {
 					$image_data = wp_get_attachment_metadata( $image_id );
@@ -253,14 +246,8 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 				$settings = $this->kraken_settings;
 				$type = $settings['api_lossy'];
-				$imageUrl = wp_get_attachment_url( $image_id );
-
-				if ( filter_var( $imageUrl, FILTER_VALIDATE_URL ) === false ) {
-				    $imageUrl = get_site_url() . $imageUrl;
-				}
-
 				$image_path = get_attached_file( $image_id );
-				$result = $this->optimize_image( $imageUrl, $type );
+				$result = $this->optimize_image( $image_path, $type );
 
 				if ( $result['success'] == true && !isset( $result['error'] ) ) {
 
@@ -468,7 +455,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			return $rv !== false;
 		}
 
-		function optimize_image( $url, $type ) {
+		function optimize_image( $image_path, $type ) {
 			$settings = $this->kraken_settings;
 			$kraken = new Kraken( $settings['api_key'], $settings['api_secret'] );
 
@@ -478,12 +465,12 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				$lossy = $settings['api_lossy'] === "lossy";
 			}
 			$params = array(
-				"url" => $url,
+				"file" => $image_path,
 				"wait" => true,
 				"lossy" => $lossy
 			);
 
-			$data = $kraken->url( $params );
+			$data = $kraken->upload( $params );
 			$data['type'] = !empty( $type ) ? $type : $settings['api_lossy'];
 
 			return $data;
@@ -509,14 +496,6 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$upload_base_path = $upload_dir['basedir'];
 			$upload_full_path = $upload_base_path . '/' . $upload_subdir;
 
-			// all the way up to /uploads
-			$upload_base_url = $upload_dir['baseurl'];
-			$upload_url = $upload_base_url . '/' . $upload_subdir;
-
-			if ( filter_var( $upload_url, FILTER_VALIDATE_URL ) === false ) {
-			    $upload_url = get_site_url() . $upload_url;
-			}
-
 			$sizes = array();
 
 			if ( isset( $image_data['sizes'] ) ) {
@@ -525,7 +504,6 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 			if ( !empty( $sizes ) ) {
 
-				$thumb_url = '';
 				$thumb_path = '';
 
 				$thumbs_optimized_store = array();
@@ -534,11 +512,10 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				foreach ( $sizes as $key => $size ) {
 
 					$thumb_path = $upload_full_path . '/' . $size['file'];
-					$thumb_url = $upload_url . '/' . $size['file'];
 
 					if ( file_exists( $thumb_path ) !== false ) {
 
-						$result = $this->optimize_image( $thumb_url, $this->optimization_type );
+						$result = $this->optimize_image( $thumb_path, $this->optimization_type );
 
 						if ( !empty($result) && isset($result['success']) && isset( $result['kraked_url'] ) ) {
 							$kraked_url = $result["kraked_url"];

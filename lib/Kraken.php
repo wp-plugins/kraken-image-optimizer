@@ -18,7 +18,7 @@ class Kraken
     public function url($opts = array())
     {
         $data = json_encode(array_merge($this->auth, $opts));
-        $response = self::request($data, "https://api-worker-5.kraken.io/v1/url");
+        $response = self::request($data, "https://api.kraken.io/v1/url");
 
         return $response;
     }

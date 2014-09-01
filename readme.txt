@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, compr
 Requires at least: 3.0.1
 Tested up to: 3.9.2
 Donate link: https://kraken.io
-Stable tag: 1.0.3.4
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -25,6 +25,7 @@ This plugin allows you to optimize new and existing Wordpress image uploads thro
 * To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
 * You can use your Kraken API key and secret on as many sites/blogs as you like. We have no per-site license.
 * Works great with WPEngine hosted blogs, including the staging area.
+* Since version 1.0.4, will work with local WordPress installations, site does not need to be published.
 
 
 Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
@@ -72,6 +73,10 @@ From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and p
 
 
 == Changelog ==
+
+= 1.0.4 =
+* Utilizes Kraken's upload API instead of URL. Images are uploaded to Kraken.io from WordPress installations, rather than fetched by Kraken.
+* Now works will local WordPress installations since hosted images are no longer fetched by URL, but uploaded by the client blog.
 
 = 1.0.3.4 =
 * Performance improvements.
