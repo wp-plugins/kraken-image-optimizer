@@ -80,9 +80,9 @@ Yes, of course they will. Our plugin simply replaces the image files on your blo
 
 = 1.0.5 =
 * Fixed CURL issues related to latest PHP versions.
-* Can now optimize filesname with non-Latin alphabet (such as Germanic umlauts, Cyrillic alphabet, etc).
+* Can now optimize filenames with non-Latin alphabet (such as Germanic umlauts, Cyrillic alphabet, etc).
 * Performance improvement when optimizing through Media Library or using the bulk optimizer.
-* Curl not present warning in Media Settings page.
+* CURL not present warning in Media Settings page.
 * Stability and reliability improvements.
 
 = 1.0.4 =
