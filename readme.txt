@@ -1,20 +1,19 @@
 === Kraken Image Optimizer ===
 Contributors: karim79
-Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, smush.it, compress, kraken-image-optimizer, tinypng, jpegmini
+Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, smush.it, compress, kraken-image-optimizer, tinypng, jpegmini, ewww
 Requires at least: 3.0.1
-Tested up to: 4.0.1
+Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.5
+Stable tag: 1.0.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 
-This plugin allows you to optimize all your Wordpress images through the Kraken API
-
+This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
 
 == Description ==
 
-This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 16MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). **Note: You will need to obtain a paid Kraken API key and secret to use this plugin**. 
+This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 16MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). **Note: You will need to obtain a paid Kraken API key and secret to use this plugin**.
 
 
 
@@ -75,8 +74,17 @@ From our plans page, right [here](https://kraken.io/plans "Kraken.io plans and p
 
 Yes, of course they will. Our plugin simply replaces the image files on your blog with the ones optimized by us.
 
+= Where can I find the option to optimize my Media Libary images?
+
+You will need to switch the Media Library from the Thumbnail view to the List view. In the "Kraked Size" column, you will then see the "Optimize This Image" button for unoptimized images, or the results of the optimization where the image has already been optimized by our plugin.
+
 
 == Changelog ==
+
+= 1.0.5.1 =
+* Tested with WordPress 4.1.
+* Better naming convention for temporary files created.
+* Updated readme.txt
 
 = 1.0.5 =
 * Fixed CURL issues related to latest PHP versions.

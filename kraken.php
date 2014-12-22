@@ -19,10 +19,10 @@
 /*
  * Plugin Name: Kraken Image Optimizer
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
- * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
+ * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.5
- * Stable Tag: 1.0.5
+ * Version: 1.0.5.1
+ * Stable Tag: 1.0.5.1
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -465,7 +465,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			}
 
 			$path_parts = pathinfo( $image_path );
-			$tmp_filename = $path_parts['dirname'] . '/' . md5( $path_parts['filename'] );
+			$tmp_filename = $path_parts['dirname'] . '/kraken_' . md5( $path_parts['filename'] );
 			if ( !empty( $path_parts['extension'] ) ) {
 				$tmp_filename .= '.' . $path_parts['extension'];
 			}
