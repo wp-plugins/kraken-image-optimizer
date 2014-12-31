@@ -16,7 +16,7 @@ This plugin allows you to optimize your WordPress images through the Kraken API,
 This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and intelligent lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 16 MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). 	
 
 = Get your FREE account with us =
-Sign up for your [https://kraken.io/plans](https://kraken.io/plans "FREE Kraken.io account") and try out our plugin and the rest of our features now, including:
+Sign up for your [FREE Kraken.io Account](https://kraken.io/plans "Kraken.io - Plan and Pricing") and try out our plugin and the rest of our features now, including:
 
 * API Access, with dozens of ready-to-use libraries and modules
 * Web Interface PRO with Image Resizing and sync-to-Dropbox
@@ -31,7 +31,7 @@ Sign up for your [https://kraken.io/plans](https://kraken.io/plans "FREE Kraken.
 * All images already present in the media library can be optimized individually, or using the Bulk Action menu "Krak 'em all" feature.
 * This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
 * All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
-* To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken Image Optimizer"). Our free account comes with a limited quota for testing our premium features, including this plugin.
+* To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken.io - Plans and Pricing"). Our free account comes with a limited quota for testing our premium features, including this plugin.
 * You can use your Kraken API key and secret on as many sites/blogs as you like. We have no per-site license.
 * Works great with WPEngine hosted blogs, including the staging area.
 * Since version 1.0.4, the plugin will work with local WordPress installations; the client site does not need to be published on the web.
