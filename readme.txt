@@ -1,10 +1,10 @@
 === Kraken Image Optimizer ===
 Contributors: karim79
-Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, smush.it, compress, kraken-image-optimizer, tinypng, jpegmini, ewww
+Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, smush.it, compress, kraken-image-optimizer, tinypng, jpegmini, ewww, pagespeed, pagespeed insights, sitespeed
 Requires at least: 3.0.1
 Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.5.1
+Stable tag: 1.0.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -13,15 +13,25 @@ This plugin allows you to optimize your WordPress images through the Kraken API,
 
 == Description ==
 
-This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 16MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). **Note: You will need to obtain a paid Kraken API key and secret to use this plugin**.
+This plugin allows you to optimize new and existing Wordpress image uploads through [Kraken Image Optimizer's](https://kraken.io "Kraken Image Optimizer") API. Both lossless and intelligent lossy optimization modes are supported. Supported filetypes are JPEG, PNG and GIF. Maximum filesize limit is 16 MB. For more details, including detailed documentation and plans and pricing, please visit [Kraken.io](https://kraken.io "Kraken Image Optimizer"). 	
+
+= Get your FREE account with us =
+Sign up for your [https://kraken.io/plans](https://kraken.io/plans "FREE Kraken.io account") and try out our plugin and the rest of our features now, including:
+
+* API Access, with dozens of ready-to-use libraries and modules
+* Web Interface PRO with Image Resizing and sync-to-Dropbox
+* URL Paster
+* Page Cruncher
+* Optimization Stats and History
+* ...and more.
 
 
-
+= About the plugin =
 * All images uploaded throught the media uploader are optimized on-the-fly. All generated thumbnails are optimized too.
 * All images already present in the media library can be optimized individually, or using the Bulk Action menu "Krak 'em all" feature.
 * This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
 * All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
-* To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken Image Optimizer"). The Developer API key/secret will **not** work with this plugin.
+* To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken Image Optimizer"). Our free account comes with a limited quota for testing our premium features, including this plugin.
 * You can use your Kraken API key and secret on as many sites/blogs as you like. We have no per-site license.
 * Works great with WPEngine hosted blogs, including the staging area.
 * Since version 1.0.4, the plugin will work with local WordPress installations; the client site does not need to be published on the web.
@@ -63,8 +73,9 @@ To install the Kraken Wordpress Plugin:
 
 = Can I test the plugin before I purchase an account from Kraken.io? =
 
-No, you can't. You can, however, directly contact Kraken.io support for a private demonstration, if you like.
-To test the performance and results of Kraken Image Optimizer, you can try the free Web Interface at https://kraken.io/web-interface
+Yes you can. All of our plans require that you first create your free Kraken account. No credit card is required, and we give you free testing quota of 50 MB, with which you can test all the features we offer, including this plugin.
+
+Additionally, if you would like to test the performance and results of Kraken Image Optimizer, you can try the free Web Interface at https://kraken.io/web-interface which does not require any registration.
 
 = Where can I purchase an API key and secret? =
 
@@ -80,6 +91,10 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 1.0.5.2 =
+* Removed hack which allows uploading of filenames with non-Latin alphabet, since Kraken API now supports it.
+* Updated readme with information about free account.
 
 = 1.0.5.1 =
 * Tested with WordPress 4.1.
