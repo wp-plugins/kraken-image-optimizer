@@ -4,7 +4,7 @@ Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, smush
 Requires at least: 3.0.1
 Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.5.2
+Stable tag: 1.0.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -38,6 +38,8 @@ Sign up for your [FREE Kraken.io Account](https://kraken.io/plans "Kraken.io - P
 
 
 Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
+
+For advanced users, there is a third party WordPress Command Line Interface (CLI) tool to allow image optimization from the command line, or by using cron. For details, visit: https://github.com/tillkruss/wp-cli-kraken 
 
 = Features on the way =
 * Optimize images directly to Amazon S3.
@@ -91,6 +93,10 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 1.0.5.3 =
+* Fixed broken spinner by updating the URL to our new CDN.
+* Added link to WP-CLI tools to readme.
 
 = 1.0.5.2 =
 * Removed hack which allows uploading of filenames with non-Latin alphabet, since Kraken API now supports it.
