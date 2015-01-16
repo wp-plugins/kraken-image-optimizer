@@ -48,7 +48,11 @@ class Kraken
             );
         }
 
-        $file = '@' . $opts['file'];
+        if (function_exists('curl_file_create')) {
+            $file = curl_file_create($opts['file'], 'image/jpeg', $opts['file']);
+        } else {
+            $file = sprintf('@%s', $opts['file']);
+        }
 
         unset($opts['file']);
 
