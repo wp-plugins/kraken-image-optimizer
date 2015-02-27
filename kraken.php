@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.5.4
- * Stable Tag: 1.0.5.4
+ * Version: 1.0.5.5
+ * Stable Tag: 1.0.5.5
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -447,7 +447,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$rv = false;
 			$fp = fopen($image_path, 'w+');
 			$ch = curl_init();
-			$headers = [];
+			$headers = array();
 			$headers[] = "Connection: keep-alive";
 			$headers[] = "Keep-Alive: 300";
 			curl_setopt($ch, CURLOPT_URL, $kraked_url);
