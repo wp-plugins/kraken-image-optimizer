@@ -1,10 +1,10 @@
 === Kraken Image Optimizer ===
 Contributors: karim79
-Tags: Image Optimizer, Optimize, Images, Media, Performance, SEO, smushit, smush.it, compress, kraken-image-optimizer, tinypng, jpegmini, ewww, pagespeed, pagespeed insights, sitespeed
+Tags: Image Optimizer, Image Optimiser, Optimize, Images, Media, Performance, SEO, faster loading times, smushit, smush.it, compress, kraken-image-optimizer, tinypng, jpegmini, ewww, pagespeed, pagespeed insights, sitespeed
 Requires at least: 3.0.1
 Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.5.3
+Stable tag: 1.0.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -93,6 +93,9 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 1.0.5.4 =
+* More reliable handling of image fetching and overwriting.
 
 = 1.0.5.3 =
 * Fixed broken spinner by updating the URL to our new CDN.
