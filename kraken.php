@@ -19,10 +19,10 @@
 /*
  * Plugin Name: Kraken Image Optimizer
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
- * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
+ * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.4
- * Stable Tag: 1.0.4
+ * Version: 1.0.5.6
+ * Stable Tag: 1.0.5.6
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -172,11 +172,6 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 				$result = $this->optimize_image( $image_path, $type );
 
-				if ( $result['success'] == true && !isset( $result['error'] ) ) {
-					$image_data = wp_get_attachment_metadata( $image_id );
-					$this->optimize_thumbnails( $image_data );
-				}
-
 				$kv = array();
 
 				if ( $result['success'] == true && !isset( $result['error'] ) ) {
@@ -317,23 +312,27 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$error = '';
 			$valid['api_lossy'] = $input['api_lossy'];
 
-			$status = $this->get_api_status( $input['api_key'], $input['api_secret'] );
-
-			if ( $status !== false ) {
-
-				if ( isset($status['active']) && $status['active'] === true ) {
-					if ( $status['plan_name'] === 'Developers' ) {
-						$error = 'Developer API credentials cannot be used with this plugin.';
-					} else {
-						$valid['api_key'] = $input['api_key'];
-						$valid['api_secret'] = $input['api_secret'];
-					}
-				} else {
-					$error = 'There is a problem with your credentials. Please check them from your Kraken.io account.';
-				}
-
+			if ( !function_exists( 'curl_exec' ) ) {
+				$error = 'cURL not available. Kraken Image Optimizer requires cURL in order to communicate with Kraken.io servers. <br /> Please ask your system administrator or host to install PHP cURL, or contact support@kraken.io for advice';
 			} else {
-				$error = 'Please enter a valid Kraken.io API key and secret';
+				$status = $this->get_api_status( $input['api_key'], $input['api_secret'] );
+
+				if ( $status !== false ) {
+
+					if ( isset($status['active']) && $status['active'] === true ) {
+						if ( $status['plan_name'] === 'Developers' ) {
+							$error = 'Developer API credentials cannot be used with this plugin.';
+						} else {
+							$valid['api_key'] = $input['api_key'];
+							$valid['api_secret'] = $input['api_secret'];
+						}
+					} else {
+						$error = 'There is a problem with your credentials. Please check them from your Kraken.io account.';
+					}
+
+				} else {
+					$error = 'Please enter a valid Kraken.io API key and secret';
+				}				
 			}
 
 			if ( !empty( $error)  ) {
@@ -464,13 +463,16 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			} else {
 				$lossy = $settings['api_lossy'] === "lossy";
 			}
+
 			$params = array(
 				"file" => $image_path,
 				"wait" => true,
-				"lossy" => $lossy
+				"lossy" => $lossy,
+				"origin" => "wp"
 			);
 
 			$data = $kraken->upload( $params );
+
 			$data['type'] = !empty( $type ) ? $type : $settings['api_lossy'];
 
 			return $data;
