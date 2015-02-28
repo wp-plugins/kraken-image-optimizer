@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.5.5
- * Stable Tag: 1.0.5.5
+ * Version: 1.0.5.6
+ * Stable Tag: 1.0.5.6
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -445,27 +445,13 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		function replace_image( $image_path, $kraked_url ) {
 			$rv = false;
-			$fp = fopen($image_path, 'w+');
-			$ch = curl_init();
-			$headers = array();
-			$headers[] = "Connection: keep-alive";
-			$headers[] = "Keep-Alive: 300";
-			curl_setopt($ch, CURLOPT_URL, $kraked_url);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($ch, CURLOPT_AUTOREFERER, false);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FAILONERROR, true);
-			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-			curl_setopt($ch, CURLOPT_FILE, $fp);
-			$rv = curl_exec($ch) !== false;
-			curl_close($ch);
-			fclose($fp);
-			return $rv;
+			$ch =  curl_init( $kraked_url );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+	        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+	        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );   
+			$result = curl_exec( $ch );
+			$rv = file_put_contents( $image_path, $result );
+			return $rv !== false;
 		}
 
 		function optimize_image( $image_path, $type ) {
