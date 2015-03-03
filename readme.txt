@@ -4,7 +4,7 @@ Tags: Image Optimizer, Image Optimiser, Optimize, Images, Media, Performance, SE
 Requires at least: 3.0.1
 Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.5.6
+Stable tag: 1.0.5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -93,6 +93,9 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 1.0.5.7 =
+* Added ability to disable automatic optimization of uploads.
 
 = 1.0.5.6 =
 * Rolled back to old way of replacing images in light of reported issues.
