@@ -86,7 +86,7 @@ p.apiStatus {
 	width: 16px;
 	height: 16px;
 	top: 5px;
-	background: url('https://kraken.r.worldssl.net/assets/images/spinner.gif') no-repeat 0 0;
+	background: url('https://kraken-nekkraug.netdna-ssl.com/assets/images/spinner.gif') no-repeat 0 0;
 }
 .krakenBulkSpinner {
 	display: none;
@@ -94,7 +94,7 @@ p.apiStatus {
 	margin: 0;
 	width: 16px;
 	height: 16px;
-	background: url('https://kraken.r.worldssl.net/assets/images/spinner.gif') no-repeat 0 0;
+	background: url('https://kraken-nekkraug.netdna-ssl.com/assets/images/spinner.gif') no-repeat 0 0;
 }
 .visible {
 	display: inline-block;

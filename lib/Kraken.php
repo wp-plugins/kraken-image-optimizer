@@ -4,6 +4,7 @@ class Kraken
 {
 
     protected $auth = array();
+    public static $kraken_plugin_version = '1.0.5.8';
 
     public function __construct($key = '', $secret = '')
     {
@@ -48,7 +49,11 @@ class Kraken
             );
         }
 
-        $file = '@' . $opts['file'];
+        if (function_exists('curl_file_create')) {
+            $file = curl_file_create($opts['file'], 'image/jpeg', $opts['file']);
+        } else {
+            $file = sprintf('@%s', $opts['file']);
+        }
 
         unset($opts['file']);
 
@@ -87,6 +92,7 @@ class Kraken
         curl_setopt($curl, CURLOPT_TIMEOUT, 400);        
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);      
+        curl_setopt($curl, CURLOPT_USERAGENT, 'WordPress/' . get_bloginfo('version') . ' KrakenPlugin/' . self::$kraken_plugin_version);      
         curl_setopt($curl, CURLOPT_FAILONERROR, 1);
 
         $response = json_decode(curl_exec($curl), true);

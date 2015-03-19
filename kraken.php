@@ -19,10 +19,10 @@
 /*
  * Plugin Name: Kraken Image Optimizer
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
- * Description: Optimize Wordpress image uploads through Kraken.io's Image Optimization API
+ * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.4
- * Stable Tag: 1.0.4
+ * Version: 1.0.5.9
+ * Stable Tag: 1.0.5.9
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -40,6 +40,8 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $optimization_type = 'lossy';
 
+		public static $kraken_plugin_version = '1.0.5.8';
+
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
 			require_once( $plugin_dir_path . '/lib/Kraken.php' );
@@ -50,8 +52,11 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			add_action( 'wp_ajax_kraken_request', array( &$this, 'kraken_media_library_ajax_callback' ) );
 			add_action( 'manage_media_custom_column', array( &$this, 'fill_media_columns' ), 10, 2 );
 			add_filter( 'manage_media_columns', array( &$this, 'add_media_columns') );
-			add_filter( 'wp_generate_attachment_metadata', array( &$this, 'optimize_thumbnails') );
-			add_action( 'add_attachment', array( &$this, 'kraken_media_uploader_callback' ) );
+
+			if ( ( !empty( $this->kraken_settings ) && !empty( $this->kraken_settings['auto_optimize'] ) ) || !isset( $this->kraken_settings['auto_optimize'] ) ) {
+				add_filter( 'wp_generate_attachment_metadata', array( &$this, 'optimize_thumbnails') );
+				add_action( 'add_attachment', array( &$this, 'kraken_media_uploader_callback' ) );				
+			}
 		}
 
 		/*
@@ -87,6 +92,14 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				'kraken_lossy',
 				'Optimization Type:',
 				array( &$this, 'show_lossy' ),
+				'media',
+				'kraken_image_optimizer'
+			);
+
+			add_settings_field(
+				'kraken_auto_optimize',
+				'Automatically optimize uploads:',
+				array( &$this, 'show_auto_optimize' ),
 				'media',
 				'kraken_image_optimizer'
 			);
@@ -171,11 +184,6 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				}
 
 				$result = $this->optimize_image( $image_path, $type );
-
-				if ( $result['success'] == true && !isset( $result['error'] ) ) {
-					$image_data = wp_get_attachment_metadata( $image_id );
-					$this->optimize_thumbnails( $image_data );
-				}
 
 				$kv = array();
 
@@ -316,24 +324,29 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$valid = array();
 			$error = '';
 			$valid['api_lossy'] = $input['api_lossy'];
+			$valid['auto_optimize'] = isset( $input['auto_optimize'] )? 1 : 0;
 
-			$status = $this->get_api_status( $input['api_key'], $input['api_secret'] );
-
-			if ( $status !== false ) {
-
-				if ( isset($status['active']) && $status['active'] === true ) {
-					if ( $status['plan_name'] === 'Developers' ) {
-						$error = 'Developer API credentials cannot be used with this plugin.';
-					} else {
-						$valid['api_key'] = $input['api_key'];
-						$valid['api_secret'] = $input['api_secret'];
-					}
-				} else {
-					$error = 'There is a problem with your credentials. Please check them from your Kraken.io account.';
-				}
-
+			if ( !function_exists( 'curl_exec' ) ) {
+				$error = 'cURL not available. Kraken Image Optimizer requires cURL in order to communicate with Kraken.io servers. <br /> Please ask your system administrator or host to install PHP cURL, or contact support@kraken.io for advice';
 			} else {
-				$error = 'Please enter a valid Kraken.io API key and secret';
+				$status = $this->get_api_status( $input['api_key'], $input['api_secret'] );
+
+				if ( $status !== false ) {
+
+					if ( isset($status['active']) && $status['active'] === true ) {
+						if ( $status['plan_name'] === 'Developers' ) {
+							$error = 'Developer API credentials cannot be used with this plugin.';
+						} else {
+							$valid['api_key'] = $input['api_key'];
+							$valid['api_secret'] = $input['api_secret'];
+						}
+					} else {
+						$error = 'There is a problem with your credentials. Please check them from your Kraken.io account.';
+					}
+
+				} else {
+					$error = 'Please enter a valid Kraken.io API key and secret';
+				}				
 			}
 
 			if ( !empty( $error)  ) {
@@ -376,6 +389,14 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$html .= '<label for="kraken_lossless">Lossless</label>';
 
 			echo $html;
+		}
+
+		function show_auto_optimize() {
+			$options = get_option( '_kraken_options' );
+			$auto_optimize = isset( $options['auto_optimize'] ) ? $options['auto_optimize'] : 1;
+			?>
+			<input type="checkbox" id="auto_optimize" name="_kraken_options[auto_optimize]" value="1" <?php checked( 1, $auto_optimize, true ); ?>/>
+			<?php
 		}
 
 		function add_media_columns( $columns ) {
@@ -449,7 +470,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$ch =  curl_init( $kraked_url );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 	        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-	        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );   
+        	curl_setopt( $ch, CURLOPT_USERAGENT, 'WordPress/' . get_bloginfo('version') . ' KrakenPlugin/' . self::$kraken_plugin_version );      
 			$result = curl_exec( $ch );
 			$rv = file_put_contents( $image_path, $result );
 			return $rv !== false;
@@ -464,13 +485,16 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			} else {
 				$lossy = $settings['api_lossy'] === "lossy";
 			}
+
 			$params = array(
 				"file" => $image_path,
 				"wait" => true,
-				"lossy" => $lossy
+				"lossy" => $lossy,
+				"origin" => "wp"
 			);
 
 			$data = $kraken->upload( $params );
+
 			$data['type'] = !empty( $type ) ? $type : $settings['api_lossy'];
 
 			return $data;
