@@ -4,7 +4,7 @@ Tags: Image Optimizer, Image Optimiser, Optimize, Optimise, Images, Media, Perfo
 Requires at least: 3.0.1
 Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -93,6 +93,9 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 1.0.7 =
+* Added the ability to reset (or remove Kraken.io metadata) from individual images or all images at once, allowing further optimization in certain cases, for example, reoptimizing a previously losslessly optimized image as lossy.
 
 = 1.0.6 =
 * Better error handling.

@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.6
- * Stable Tag: 1.0.6
+ * Version: 1.0.7
+ * Stable Tag: 1.0.7
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -40,7 +40,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $optimization_type = 'lossy';
 
-		public static $kraken_plugin_version = '1.0.5.8';
+		public static $kraken_plugin_version = '1.0.7';
 
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
@@ -49,7 +49,9 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$this->optimization_type = $this->kraken_settings['api_lossy'];
 			add_action( 'admin_init', array( &$this, 'admin_init' ) );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'my_enqueue' ) );
+			add_action( 'wp_ajax_kraken_reset', array( &$this, 'kraken_media_library_reset' ) );
 			add_action( 'wp_ajax_kraken_request', array( &$this, 'kraken_media_library_ajax_callback' ) );
+			add_action( 'wp_ajax_kraken_reset_all', array( &$this, 'kraken_media_library_reset_all' ) );
 			add_action( 'manage_media_custom_column', array( &$this, 'fill_media_columns' ), 10, 2 );
 			add_filter( 'manage_media_columns', array( &$this, 'add_media_columns') );
 
@@ -105,13 +107,20 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			);
 
 			add_settings_field(
+				'kraken_show_reset',
+				'Show Reset field: <small class="krakenWhatsThis" title="Checking this option will add a Reset button in the Kraked Size column for each optimized image. Resetting an image will remove the metadata associated with it, effectively making your blog forget that it had been optimized in the first place, allowing further optimization.">what\'s this?</small>',
+				array( &$this, 'show_reset_field' ),
+				'media',
+				'kraken_image_optimizer'
+			);			
+
+			add_settings_field(
 				'credentials_valid',
 				'API status:',
 				array( &$this, 'show_credentials_validity' ),
 				'media',
 				'kraken_image_optimizer'
 			);
-
 		}
 
 		function my_enqueue( $hook ) {
@@ -129,15 +138,6 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		}
 
 		function get_api_status( $api_key, $api_secret ) {
-
-			/*  Possible API Status Errors:
-			 *
-			 * 'Incoming request body does not contain a valid JSON object'
-			 * 'Incoming request body does not contain a valid auth.api_key or auth.api_secret'
-			 * 'Kraken has encountered an unexpected error and cannot fulfill your request'
-			 * 'User not found'
-			 * 'API Key and API Secret mismatch'
-			 */
 
 			if ( !empty( $api_key ) && !empty( $api_secret ) ) {
 				$kraken = new Kraken( $api_key, $api_secret );
@@ -198,8 +198,9 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					$kv['type'] = $result['type'];
 					$kv['success'] = true;
 					$kv['meta'] = wp_get_attachment_metadata( $image_id );
+					$saved_bytes = (int) $kv['saved_bytes'];
 
-					if ( $this->replace_image( $image_path, $kraked_url ) ) {
+					if ( $this->replace_image( $image_path, $result['kraked_url'] ) ) {
 
 						// get metadata for thumbnails
 						$image_data = wp_get_attachment_metadata( $image_id );
@@ -208,17 +209,18 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 						// store kraked info to DB
 						update_post_meta( $image_id, '_kraken_size', $kv );
 
-						// krak thumbnails, store that data too
+						// krak thumbnails, store that data too. This can be unset when there are no thumbs
 						$kraked_thumbs_data = get_post_meta( $image_id, '_kraked_thumbs', true );
 						if ( !empty( $kraked_thumbs_data ) ) {
 							$kv['thumbs_data'] = $kraked_thumbs_data;
 						}
-
+						$kv['html'] = $this->results_html( $image_id );
 						echo json_encode( $kv );
 					} else {
 						echo json_encode( array( 'error' => 'Could not overwrite original file. Please ensure that your files are writable by plugins.' ) );
 						exit;
-					}
+					}	
+
 				} else {
 
 					// error or no optimization
@@ -268,12 +270,14 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					$kv['type'] = $result['type'];
 					$kv['success'] = true;
 					$kv['meta'] = wp_get_attachment_metadata( $image_id );
+					$saved_bytes = (int) $kv['saved_bytes'];
 
 					if ( $this->replace_image( $image_path, $kraked_url ) ) {
 						update_post_meta( $image_id, '_kraken_size', $kv );
 					} else {
 						// writing image failed
 					}
+
 				} else {
 
 					// error or no optimization
@@ -295,6 +299,49 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 					}
 				}
 			}
+		}
+
+		function kraken_media_library_reset() {
+			$image_id = (int) $_POST['id'];
+			$image_meta = get_post_meta( $image_id, '_kraken_size', true );
+			$original_size = $image_meta['kraked_size'];
+			delete_post_meta( $image_id, '_kraken_size' );
+			delete_post_meta( $image_id, '_kraked_thumbs' );			
+			echo json_encode( array( 'success' => true, 'original_size' => $original_size, 'html' => $this->optimize_button_html( $image_id ) ) );
+			die();
+ 		}
+
+		function kraken_media_library_reset_all() {
+			$result = null;
+			delete_post_meta_by_key( '_kraked_thumbs' );
+			delete_post_meta_by_key( '_kraken_size' );
+			$result = json_encode( array( 'success' => true ) );
+			echo $result;
+			die();
+ 		}
+
+
+		function optimize_button_html( $id )  {
+			$image_url = wp_get_attachment_url( $id );
+			$filename = basename( $image_url );
+
+$html = <<<EOD
+	<div class="buttonWrap">
+		<button type="button" 
+				data-setting="$this->optimization_type" 
+				class="kraken_req" 
+				data-id="$id" 
+				id="krakenid-$id" 
+				data-filename="$filename" 
+				data-url="<$image_url">
+			Optimize This Image
+		</button>
+		<small class="krakenOptimizationType" style="display:none">$this->optimization_type</small>
+		<span class="krakenSpinner"></span>
+	</div>
+EOD;
+
+			return $html;
 		}
 
 
@@ -325,6 +372,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			$error = '';
 			$valid['api_lossy'] = $input['api_lossy'];
 			$valid['auto_optimize'] = isset( $input['auto_optimize'] )? 1 : 0;
+			$valid['show_reset'] = isset( $input['show_reset'] ) ? $input['show_reset'] : 0;
 
 			if ( !function_exists( 'curl_exec' ) ) {
 				$error = 'cURL not available. Kraken Image Optimizer requires cURL in order to communicate with Kraken.io servers. <br /> Please ask your system administrator or host to install PHP cURL, or contact support@kraken.io for advice';
@@ -399,10 +447,52 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			<?php
 		}
 
+		function show_reset_field() {
+			$options = get_option( '_kraken_options' );
+			$show_reset = isset( $options['show_reset'] ) ? $options['show_reset'] : 0;
+			?>
+			<input type="checkbox" id="show_reset" name="_kraken_options[show_reset]" value="1" <?php checked( 1, $show_reset, true ); ?>/>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="kraken-reset-all enabled">Reset All Images</span>
+			<?php
+		}
+
 		function add_media_columns( $columns ) {
 			$columns['original_size'] = 'Original Size';
 			$columns['kraked_size'] = 'Kraked Size';
 			return $columns;
+		}
+
+		function results_html( $id ) {
+			$image_meta = get_post_meta( $id, '_kraken_size', true );
+			$thumbs_meta = get_post_meta( $id, '_kraked_thumbs', true );
+			$kraked_size = $image_meta['kraked_size'];
+			$type = $image_meta['type'];
+			$thumbs_count = count( $thumbs_meta );
+			$savings_percentage = $image_meta['savings_percent'];
+
+			ob_start();
+			?>
+				<strong><?php echo $kraked_size; ?></strong>
+				<br />
+				<small>Type:&nbsp;<?php echo $type; ?></small>
+				<br />
+				<small>Savings:&nbsp;<?php echo $savings_percentage; ?></small>
+				<?php if ( !empty( $thumbs_meta ) ) { ?>
+					<br />
+					<small><?php echo $thumbs_count; ?> thumbs optimized</small>
+				<?php } ?>
+				<?php if ( !empty( $this->kraken_settings['show_reset'] ) ) { ?>
+					<br />
+					<small 
+						class="krakenReset" data-id="<?php echo $id; ?>"
+						title="Removes Kraken metadata associated with this image">
+						Reset
+					</small>
+					<span class="krakenSpinner"></span>
+				<?php } ?>
+			<?php 	
+			$html = ob_get_clean();
+			return $html;
 		}
 
 		function fill_media_columns( $column_name, $id ) {
@@ -435,17 +525,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 					// Is it optimized? Show some stats
 					if ( isset( $meta['kraked_size'] ) && empty( $meta['no_savings'] ) ) {
-						$kraked_size = $meta['kraked_size'];
-						$type = $meta['type'];
-						$savings_percentage = $meta['savings_percent'];
-						echo '<strong>' . $kraked_size .'</strong><br /><small>Type:&nbsp;' . $type . '</small><br /><small>Savings:&nbsp;' . $savings_percentage . '</small>';
-
-						$thumbs_data = get_post_meta( $id, '_kraked_thumbs', true );
-						$thumbs_count = count( $thumbs_data );
-
-						if ( !empty( $thumbs_data ) ) {
-							echo '<br /><small>' . $thumbs_count . ' thumbs optimized' . '</small>';
-						}
+						echo $this->results_html( $id );
 
 					// Were there no savings, or was there an error?
 					} else {
@@ -495,7 +575,8 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 			try { 
 				$data = $kraken->upload( $params ); 
-			} catch (Exception $e) {}
+			} catch (Exception $e) {
+			}
 
 			$data['type'] = !empty( $type ) ? $type : $settings['api_lossy'];
 
@@ -558,6 +639,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			}
 			return $image_data;
 		}
+
 
 		static function pretty_kb( $bytes ) {
 			return round( ( $bytes / 1024 ), 2 ) . ' kB';
