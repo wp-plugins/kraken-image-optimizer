@@ -165,3 +165,27 @@ span.kraken-bulk-choose-type {
 	display: inline-block;
 	margin: 0 0 4px 4px;
 }
+small.krakenReset {
+	text-decoration: underline;
+	cursor: pointer;
+}
+.resetSpinner {
+	display: inline-block;
+	margin-right: 3px;
+	margin-top: 4px;
+	vertical-align: baseline;
+	width: 10px;
+	height: 10px;
+	background: url('https://kraken-nekkraug.netdna-ssl.com/assets/images/spinner.gif') no-repeat 0 0;
+	background-size: 10px;	
+}
+small.krakenWhatsThis {
+	font-size: 9px;
+}
+span.kraken-reset-all {
+	font-size: 11px;
+}
+span.kraken-reset-all.enabled {
+	text-decoration: underline;
+	cursor: pointer;
+}
