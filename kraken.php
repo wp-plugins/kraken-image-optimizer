@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright 2014  Karim Salman  (email : ksalman@kraken.io)
+	Copyright 2015  Karim Salman  (email : ksalman@kraken.io)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.7
- * Stable Tag: 1.0.7
+ * Version: 1.0.8
+ * Stable Tag: 1.0.8
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -40,7 +40,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $optimization_type = 'lossy';
 
-		public static $kraken_plugin_version = '1.0.7';
+		public static $kraken_plugin_version = '1.0.8';
 
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
@@ -115,6 +115,14 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			);			
 
 			add_settings_field(
+				'bulk_async_limit',
+				'Bulk Concurrency: <small class="krakenWhatsThis" title="This settings defines how many images can be processed at the same time using the bulk optimizer. The recommended value is 4. For blogs on very small hosting plans, or with reduced connectivity, a lower number might be necessary to avoid hitting request limits.">what\'s this?</small>',				
+				array( &$this, 'show_bulk_async_limit' ),
+				'media',
+				'kraken_image_optimizer'
+			);
+
+			add_settings_field(
 				'credentials_valid',
 				'API status:',
 				array( &$this, 'show_credentials_validity' ),
@@ -133,6 +141,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 				wp_enqueue_style( 'tipsy-style', plugins_url( 'css/tipsy.css', __FILE__ ) );
 				wp_enqueue_style( 'modal-style', plugins_url( 'css/jquery.modal.css', __FILE__ ) );
 				wp_localize_script( 'ajax-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+				wp_localize_script( 'ajax-script', 'kraken_settings', $this->kraken_settings );
 				wp_enqueue_script( 'modal-js', plugins_url( '/js/jquery.modal.min.js', __FILE__ ), array( 'jquery' ) );				
 			}
 		}
@@ -373,6 +382,8 @@ EOD;
 			$valid['api_lossy'] = $input['api_lossy'];
 			$valid['auto_optimize'] = isset( $input['auto_optimize'] )? 1 : 0;
 			$valid['show_reset'] = isset( $input['show_reset'] ) ? $input['show_reset'] : 0;
+			$valid['bulk_async_limit'] = isset( $input['bulk_async_limit'] ) ? $input['bulk_async_limit'] : 4;
+
 
 			if ( !function_exists( 'curl_exec' ) ) {
 				$error = 'cURL not available. Kraken Image Optimizer requires cURL in order to communicate with Kraken.io servers. <br /> Please ask your system administrator or host to install PHP cURL, or contact support@kraken.io for advice';
@@ -455,6 +466,21 @@ EOD;
 			&nbsp;&nbsp;&nbsp;&nbsp;<span class="kraken-reset-all enabled">Reset All Images</span>
 			<?php
 		}
+
+		function show_bulk_async_limit() {
+			$options = get_option( '_kraken_options' );
+			$bulk_limit = isset( $options['bulk_async_limit'] ) ? $options['bulk_async_limit'] : 4;
+			?>
+			<select name="_kraken_options[bulk_async_limit]">
+				<?php foreach ( range(1, 10) as $number ) { ?>
+					<option value="<?php echo $number ?>" <?php selected( $bulk_limit, $number, true); ?>>
+						<?php echo $number ?>
+					</option><?php selected( $selected, $current, $echo); ?>
+				<?php } ?>
+			</select>
+			<?php
+		}
+
 
 		function add_media_columns( $columns ) {
 			$columns['original_size'] = 'Original Size';

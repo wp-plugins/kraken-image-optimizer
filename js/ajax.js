@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 
-
+    console.log(kraken_settings);
     var errors = [{
         code: 401,
         msg: 'Unnknown API Key. Please check your API key and try again'
@@ -146,7 +146,7 @@ jQuery(document).ready(function($) {
                 closeText: 'close',
                 showClose: false
             },
-            setting = $("button.kraken_req").eq(0).data("setting"),
+            setting = kraken_settings.api_lossy,
             nImages = bulkImageData.length,
             header = '<p class="krakenBulkHeader">Kraken Bulk Image Optimization</p>',
             krakEmAll = '<button class="kraken_req_bulk">Krak \'em all</button>',
@@ -298,7 +298,7 @@ jQuery(document).ready(function($) {
                 });
                 callback();
             });
-        }, 5);
+        }, kraken_settings.bulk_async_limit);
 
         q.drain = function() {
             $(".kraken_req_bulk")
