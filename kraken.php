@@ -475,7 +475,7 @@ EOD;
 				<?php foreach ( range(1, 10) as $number ) { ?>
 					<option value="<?php echo $number ?>" <?php selected( $bulk_limit, $number, true); ?>>
 						<?php echo $number ?>
-					</option><?php selected( $selected, $current, $echo); ?>
+					</option>
 				<?php } ?>
 			</select>
 			<?php
