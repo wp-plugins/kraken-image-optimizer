@@ -1,6 +1,5 @@
 jQuery(document).ready(function($) {
 
-    console.log(kraken_settings);
     var errors = [{
         code: 401,
         msg: 'Unnknown API Key. Please check your API key and try again'
