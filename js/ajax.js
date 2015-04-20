@@ -1,6 +1,5 @@
 jQuery(document).ready(function($) {
 
-
     var errors = [{
         code: 401,
         msg: 'Unnknown API Key. Please check your API key and try again'
@@ -146,7 +145,7 @@ jQuery(document).ready(function($) {
                 closeText: 'close',
                 showClose: false
             },
-            setting = $("button.kraken_req").eq(0).data("setting"),
+            setting = kraken_settings.api_lossy,
             nImages = bulkImageData.length,
             header = '<p class="krakenBulkHeader">Kraken Bulk Image Optimization</p>',
             krakEmAll = '<button class="kraken_req_bulk">Krak \'em all</button>',
@@ -156,14 +155,14 @@ jQuery(document).ready(function($) {
             .append(typeRadios)
             .append('<br /><small class="kraken-bulk-small">The following <strong>' + nImages + '</strong> images will be optimized by Kraken.io using the <strong class="bulkSetting">' + setting + '</strong> setting:</small><br />')
             .appendTo("body")
-            .modal(modalOptions)
-            .bind($.modal.BEFORE_CLOSE, function(event, modal) {
+            .kmodal(modalOptions)
+            .bind($.kmodal.BEFORE_CLOSE, function(event, modal) {
 
             })
-            .bind($.modal.OPEN, function(event, modal) {
+            .bind($.kmodal.OPEN, function(event, modal) {
 
             })
-            .bind($.modal.CLOSE, function(event, modal) {
+            .bind($.kmodal.CLOSE, function(event, modal) {
                 $("#kraken-bulk-modal").remove();
             })
             .css({
@@ -207,7 +206,7 @@ jQuery(document).ready(function($) {
             .append('<span class="close-kraken-bulk">Close Window</span>');
 
         $(".close-kraken-bulk").click(function() {
-            $.modal.close();
+            $.kmodal.close();
         });
 
         if (!nImages) {
@@ -298,7 +297,7 @@ jQuery(document).ready(function($) {
                 });
                 callback();
             });
-        }, 5);
+        }, kraken_settings.bulk_async_limit);
 
         q.drain = function() {
             $(".kraken_req_bulk")
@@ -309,7 +308,7 @@ jQuery(document).ready(function($) {
                 .text("Done")
                 .unbind("click")
                 .click(function() {
-                    $.modal.close();
+                    $.kmodal.close();
                 });
         }
 

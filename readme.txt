@@ -4,7 +4,7 @@ Tags: Image Optimizer, Image Optimiser, Optimize, Optimise, Images, Media, Perfo
 Requires at least: 3.0.1
 Tested up to: 4.1
 Donate link: https://kraken.io
-Stable tag: 1.0.7
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -93,6 +93,13 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 1.0.9 =
+* Fixed potential conflict with Bootstrap Modal on blogs using Twitter Bootstrap.
+* Better bundling of scripts for faster loading of the plugin.
+
+= 1.0.8 =
+* Added the ability to control the number of images the bulk tool optimizes at once. The default settings of 4 is recommended. Blogs with limited resources, for example those on small shared hosting plans should try a lower value if they run into issues with bulk optimization. Blogs on larger hosting plans can experiment with higher values.
 
 = 1.0.7 =
 * Added the ability to reset (or remove Kraken.io metadata) from individual images or all images at once, allowing further optimization in certain cases, for example, reoptimizing a previously losslessly optimized image as lossy.
