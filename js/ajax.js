@@ -150,7 +150,7 @@ jQuery(document).ready(function($) {
             header = '<p class="krakenBulkHeader">Kraken Bulk Image Optimization</p>',
             krakEmAll = '<button class="kraken_req_bulk">Krak \'em all</button>',
             typeRadios = '<span class="radiosWrap"><span class="kraken-bulk-choose-type">Choose:</span>' + '<input type="radio" id="kraken-bulk-type-lossy" value="Lossy" name="kraken-bulk-type"/>' + '<label for="kraken-bulk-type-lossy">Lossy</label>&nbsp;' + '<input type="radio" id="kraken-bulk-type-lossless" value="Lossless" name="kraken-bulk-type"/>' + '<label for="kraken-bulk-type-lossless">Lossless</label></span>',
-            $modal = $('<div id="kraken-bulk-modal" class="modal"></div>')
+            $modal = $('<div id="kraken-bulk-modal" class="kraken-modal"></div>')
             .html(header)
             .append(typeRadios)
             .append('<br /><small class="kraken-bulk-small">The following <strong>' + nImages + '</strong> images will be optimized by Kraken.io using the <strong class="bulkSetting">' + setting + '</strong> setting:</small><br />')
