@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.8
- * Stable Tag: 1.0.8
+ * Version: 1.0.9
+ * Stable Tag: 1.0.9
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -30,6 +30,7 @@
 
 if ( !class_exists( 'Wp_Kraken' ) ) {
 
+	define( 'KRAKEN_DEV_MODE', false );
 	class Wp_Kraken {
 
 		private $id;
@@ -40,7 +41,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $optimization_type = 'lossy';
 
-		public static $kraken_plugin_version = '1.0.8';
+		public static $kraken_plugin_version = '1.0.9';
 
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
@@ -134,15 +135,21 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		function my_enqueue( $hook ) {
 			if ( $hook == 'options-media.php' || $hook == 'upload.php') {
 				wp_enqueue_script( 'jquery' );
-				wp_enqueue_script( 'tipsy-js', plugins_url( '/js/jquery.tipsy.js', __FILE__ ), array( 'jquery' ) );
-				wp_enqueue_script( 'async-js', plugins_url( '/js/async.js', __FILE__ ) );
-				wp_enqueue_script( 'ajax-script', plugins_url( '/js/ajax.js', __FILE__ ), array( 'jquery' ) );
+				if ( KRAKEN_DEV_MODE === true ) {
+					wp_enqueue_script( 'async-js', plugins_url( '/js/async.js', __FILE__ ) );
+					wp_enqueue_script( 'tipsy-js', plugins_url( '/js/jquery.tipsy.js', __FILE__ ), array( 'jquery' ) );
+					wp_enqueue_script( 'modal-js', plugins_url( '/js/jquery.modal.min.js', __FILE__ ), array( 'jquery' ) );
+					wp_enqueue_script( 'ajax-script', plugins_url( '/js/ajax.js', __FILE__ ), array( 'jquery' ) );
+					wp_localize_script( 'ajax-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+					wp_localize_script( 'ajax-script', 'kraken_settings', $this->kraken_settings );
+				} else {
+					wp_enqueue_script( 'kraken-js', plugins_url( '/js/dist/kraken.min.js', __FILE__ ), array( 'jquery' ) );
+					wp_localize_script( 'kraken-js', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+					wp_localize_script( 'kraken-js', 'kraken_settings', $this->kraken_settings );										
+				}
 				wp_enqueue_style( 'kraken_admin_style', plugins_url( 'css/admin.css', __FILE__ ) );
 				wp_enqueue_style( 'tipsy-style', plugins_url( 'css/tipsy.css', __FILE__ ) );
 				wp_enqueue_style( 'modal-style', plugins_url( 'css/jquery.modal.css', __FILE__ ) );
-				wp_localize_script( 'ajax-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
-				wp_localize_script( 'ajax-script', 'kraken_settings', $this->kraken_settings );
-				wp_enqueue_script( 'modal-js', plugins_url( '/js/jquery.modal.min.js', __FILE__ ), array( 'jquery' ) );				
 			}
 		}
 

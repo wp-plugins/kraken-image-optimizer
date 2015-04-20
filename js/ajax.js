@@ -155,14 +155,14 @@ jQuery(document).ready(function($) {
             .append(typeRadios)
             .append('<br /><small class="kraken-bulk-small">The following <strong>' + nImages + '</strong> images will be optimized by Kraken.io using the <strong class="bulkSetting">' + setting + '</strong> setting:</small><br />')
             .appendTo("body")
-            .modal(modalOptions)
-            .bind($.modal.BEFORE_CLOSE, function(event, modal) {
+            .kmodal(modalOptions)
+            .bind($.kmodal.BEFORE_CLOSE, function(event, modal) {
 
             })
-            .bind($.modal.OPEN, function(event, modal) {
+            .bind($.kmodal.OPEN, function(event, modal) {
 
             })
-            .bind($.modal.CLOSE, function(event, modal) {
+            .bind($.kmodal.CLOSE, function(event, modal) {
                 $("#kraken-bulk-modal").remove();
             })
             .css({
@@ -206,7 +206,7 @@ jQuery(document).ready(function($) {
             .append('<span class="close-kraken-bulk">Close Window</span>');
 
         $(".close-kraken-bulk").click(function() {
-            $.modal.close();
+            $.kmodal.close();
         });
 
         if (!nImages) {
@@ -308,7 +308,7 @@ jQuery(document).ready(function($) {
                 .text("Done")
                 .unbind("click")
                 .click(function() {
-                    $.modal.close();
+                    $.kmodal.close();
                 });
         }
 
