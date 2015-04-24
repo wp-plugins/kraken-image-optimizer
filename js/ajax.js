@@ -405,6 +405,21 @@ jQuery(document).ready(function($) {
             });
     });
 
+    $('.krakenAdvancedSettings h3').on('click', function () {
+        var $rows = $('.kraken-advanced-settings');
+        var $plusMinus = $('.kraken-plus-minus');
+        if ($rows.is(':visible')) {
+            $rows.hide();
+            $plusMinus
+                .removeClass('dashicons-arrow-down')
+                .addClass('dashicons-arrow-right');
+        } else {
+            $rows.show();
+            $plusMinus
+                .removeClass('dashicons-arrow-right')
+                .addClass('dashicons-arrow-down');        
+        }
+    });
 
     $('body').on("click", ".kraken_req", function(e) {
         e.preventDefault();
