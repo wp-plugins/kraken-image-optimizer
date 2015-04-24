@@ -21,8 +21,8 @@
  * Plugin URI: http://wordpress.org/plugins/kraken-image-optimizer/
  * Description: This plugin allows you to optimize your WordPress images through the Kraken API, the world's most advanced image optimization solution.
  * Author: Karim Salman
- * Version: 1.0.8
- * Stable Tag: 1.0.8
+ * Version: 2.0
+ * Stable Tag: 2.0
  * Author URI: https://kraken.io
  * License GPL2
  */
@@ -30,6 +30,7 @@
 
 if ( !class_exists( 'Wp_Kraken' ) ) {
 
+	define( 'KRAKEN_DEV_MODE', false );
 	class Wp_Kraken {
 
 		private $id;
@@ -40,7 +41,7 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 
 		private $optimization_type = 'lossy';
 
-		public static $kraken_plugin_version = '1.0.8';
+		public static $kraken_plugin_version = '2.0';
 
 		function __construct() {
 			$plugin_dir_path = dirname( __FILE__ );
@@ -54,10 +55,188 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 			add_action( 'wp_ajax_kraken_reset_all', array( &$this, 'kraken_media_library_reset_all' ) );
 			add_action( 'manage_media_custom_column', array( &$this, 'fill_media_columns' ), 10, 2 );
 			add_filter( 'manage_media_columns', array( &$this, 'add_media_columns') );
-
+			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( &$this, 'add_settings_link' ) );
 			if ( ( !empty( $this->kraken_settings ) && !empty( $this->kraken_settings['auto_optimize'] ) ) || !isset( $this->kraken_settings['auto_optimize'] ) ) {
 				add_filter( 'wp_generate_attachment_metadata', array( &$this, 'optimize_thumbnails') );
 				add_action( 'add_attachment', array( &$this, 'kraken_media_uploader_callback' ) );				
+			}
+			add_action( 'admin_menu', array( &$this, 'kraken_menu' ) );			
+		}
+
+		function kraken_menu() {
+			add_options_page( 'Kraken Image Optimizer Settings', 'Kraken.io', 'manage_options', 'wp-krakenio', array( &$this, 'kraken_settings_page' ) );
+		}
+
+
+		function add_settings_link ( $links ) {
+			$mylinks = array(
+				'<a href="' . admin_url( 'options-general.php?page=wp-krakenio' ) . '">Settings</a>',
+			);
+			return array_merge( $links, $mylinks );
+		}
+
+
+		function  kraken_settings_page() {
+			     
+			if ( !empty( $_POST ) ) {
+				$options = $_POST['_kraken_options'];
+				$result = $this->validate_options( $options );
+				update_option( '_kraken_options', $result['valid'] );
+			}
+
+			$settings = get_option( '_kraken_options' );
+			$lossy = isset( $settings['api_lossy'] ) ? $settings['api_lossy'] : 'lossy';
+			$auto_optimize = isset( $settings['auto_optimize'] ) ? $settings['auto_optimize'] : 1;
+			
+			$api_key = isset( $settings['api_key'] ) ? $settings['api_key'] : '';
+			$api_secret = isset( $settings['api_secret'] ) ? $settings['api_secret'] : '';
+			
+			$show_reset = isset( $settings['show_reset'] ) ? $settings['show_reset'] : 0;
+			$bulk_async_limit = isset( $settings['bulk_async_limit'] ) ? $settings['bulk_async_limit'] : 4;
+
+			$status = $this->get_api_status( $api_key, $api_secret );
+
+			$icon_url = admin_url() . 'images/';
+			if ( $status !== false && isset( $status['active'] ) && $status['active'] === true ) {
+				$icon_url .= 'yes.png';
+				$status_html = '<p class="apiStatus">Your credentials are valid <span class="apiValid" style="background:url(' . "'$icon_url') no-repeat 0 0" . '"></span></p>';
+			} else {
+				$icon_url .= 'no.png';
+				$status_html = '<p class="apiStatus">There is a problem with your credentials <span class="apiInvalid" style="background:url(' . "'$icon_url') no-repeat 0 0" . '"></span></p>';
+			}
+
+			?>	<h1 class="kraken-admin-section-title">Kraken.io Settings</h1>
+					<?php if ( isset( $result['error'] ) ) { ?>
+						<div class="kraken error settings-error">
+						<?php foreach( $result['error'] as $error ) { ?>
+							<p><?php echo $error; ?></p>
+						<?php } ?>
+						</div>
+					<?php } else if ( isset( $result['success'] ) ) { ?>
+						<div class="kraken updated settings-error">
+							<p>Settings saved.</p>
+						</div>
+					<?php } ?>
+
+					<?php if ( !function_exists( 'curl_init' ) ) { ?>
+						<p class="curl-warning"><strong>Warning: </strong>CURL is not available. Please install CURL before using this plugin</p>
+					<?php } ?>
+
+					<form id="krakenSettings" method="post">
+						<a href="http://kraken.io" title="Visit Kraken.io Homepage">Kraken.io</a> API settings
+						<table class="form-table">
+						    <tbody>
+						        <tr>
+						            <th scope="row">API Key:</th>
+						            <td>
+						                <input id="kraken_api_key" name="_kraken_options[api_key]" type="text" value="<?php echo esc_attr( $api_key ); ?>" size="50">
+						            </td>
+						        </tr>
+						        <tr>
+						            <th scope="row">API Secret:</th>
+						            <td>
+						                <input id="kraken_api_secret" name="_kraken_options[api_secret]" type="text" value="<?php echo esc_attr( $api_secret ); ?>" size="50">
+						            </td>
+						        </tr>
+						        <tr>
+						            <th scope="row">Optimization Type:</th>
+						            <td>
+						                <input type="radio" id="kraken_lossy" name="_kraken_options[api_lossy]" value="lossy" <?php checked( 'lossy', $lossy, true ); ?>/>
+						                <label for="kraken_lossy">Lossy</label>
+						                <input style="margin-left:10px;" type="radio" id="kraken_lossless" name="_kraken_options[api_lossy]" value="lossless" <?php checked( 'lossless', $lossy, true ) ?>/>
+						                <label for="kraken_lossless">Lossless</label>
+						            </td>
+						        </tr>
+						        <tr>
+						            <th scope="row">Automatically optimize uploads:</th>
+						            <td>
+						                <input type="checkbox" id="auto_optimize" name="_kraken_options[auto_optimize]" value="1" <?php checked( 1, $auto_optimize, true ); ?>/>
+						            </td>
+						        </tr>					        
+						        <tr>
+						            <th scope="row">API status:</th>
+						            <td>
+						                <?php echo $status_html ?>
+						            </td>
+						        </tr>
+						        <tr>
+						        	<td class="krakenAdvancedSettings"><h3><span class="kraken-advanced-settings-label" title="Click to toggle advanced settings">Advanced Settings</span><span class="kraken-plus-minus dashicons dashicons-arrow-right"></span></h3></td>
+						        </tr>
+						        <tr class="kraken-advanced-settings">
+						        	<td colspan="2" class="krakenAdvancedSettingsDescription"><small>We recommend that you leave these settings at their default values</td>
+						        </tr>
+    						    <tr class="kraken-advanced-settings">
+						            <th scope="row">
+						            	Show metadata reset per image:&nbsp;
+							            <small class="krakenWhatsThis" title="Checking this option will add a Reset button in the Kraked Size column for each optimized image. Resetting an image will remove the Kraken.io metadata associated with it, effectively making your blog forget that it had been optimized in the first place, allowing further optimization in some cases. If an image has been optimized using the lossless setting, lossless optimization will not yield any greater savings. If in doubt, please contact support@kraken.io">What's this?</small>
+							        </th>
+						            <td>
+						                <input type="checkbox" id="kraken_show_reset" name="_kraken_options[show_reset]" value="1" <?php checked( 1, $show_reset, true ); ?>/>
+						                &nbsp;&nbsp;&nbsp;&nbsp;<span class="kraken-reset-all enabled">Reset All Images</span>
+						            </td>
+						        </tr>
+						        <tr class="kraken-advanced-settings">
+						        	<th scope="row">
+						        		Bulk Concurrency:
+						        		<small class="krakenWhatsThis" title="This settings defines how many images can be processed at the same time using the bulk optimizer. The recommended value is 4. For blogs on very small hosting plans, or with reduced connectivity, a lower number might be necessary to avoid hitting request limits.">what's this?</small>
+						        	</th>
+						        	<td>
+										<select name="_kraken_options[bulk_async_limit]">
+											<?php foreach ( range(1, 10) as $number ) { ?>
+												<option value="<?php echo $number ?>" <?php selected( $bulk_async_limit, $number, true); ?>>
+													<?php echo $number ?>
+												</option>
+											<?php } ?>
+										</select>
+						        	</td>
+						        </tr>						        
+						    </tbody>
+						</table>
+			     <input type="submit" name="kraken_save" id="kraken_save" class="button button-primary" value="Save All"/>
+			  </form>
+			<?php
+		}
+
+		function validate_options( $input ) {
+			$valid = array();
+			$error = array();
+			$valid['api_lossy'] = $input['api_lossy'];
+			$valid['auto_optimize'] = isset( $input['auto_optimize'] )? 1 : 0;
+			$valid['show_reset'] = isset( $input['show_reset'] ) ? 1 : 0;
+			$valid['bulk_async_limit'] = isset( $input['bulk_async_limit'] ) ? $input['bulk_async_limit'] : 4;
+
+			if ( $valid['show_reset'] ) {
+				$valid['show_reset'] = $input['show_reset'];
+			}
+
+			if ( empty( $input['api_key']) || empty( $input['api_secret'] ) ) {
+				$error[] = 'API Credentials must not be left blank.';
+			} else {
+			
+				$status = $this->get_api_status( $input['api_key'], $input['api_secret'] );
+
+				if ( $status !== false ) {
+
+					if ( isset($status['active']) && $status['active'] === true ) {
+						if ( $status['plan_name'] === 'Developers' ) {
+							$error[] = 'Developer API credentials cannot be used with this plugin.';
+						} else {
+							$valid['api_key'] = $input['api_key'];
+							$valid['api_secret'] = $input['api_secret'];
+						}
+					} else {
+						$error[] = 'There is a problem with your credentials. Please check them from your Kraken.io account.';
+					}
+
+				} else {
+					$error[] = 'Please enter a valid Kraken.io API key and secret.';
+				}			
+			}
+
+			if ( !empty( $error ) ) {
+				return array( 'success' => false, 'error' => $error, 'valid' => $valid );
+			} else {
+				return array( 'success' => true, 'valid' => $valid );
 			}
 		}
 
@@ -66,83 +245,32 @@ if ( !class_exists( 'Wp_Kraken' ) ) {
 		 */
 		function admin_init() {
 
-			add_settings_section( 'kraken_image_optimizer', 'Kraken Image Optimizer', array( &$this, 'show_kraken_image_optimizer' ), 'media' );
-
-			register_setting(
-				'media',
-				'_kraken_options',
-				array( &$this, 'validate_options' )
-			);
-
-			add_settings_field(
-				'kraken_api_key',
-				'API Key:',
-				array( &$this, 'show_api_key' ),
-				'media',
-				'kraken_image_optimizer'
-			);
-
-			add_settings_field(
-				'kraken_api_secret',
-				'API Secret:',
-				array( &$this, 'show_api_secret' ),
-				'media',
-				'kraken_image_optimizer'
-			);
-
-			add_settings_field(
-				'kraken_lossy',
-				'Optimization Type:',
-				array( &$this, 'show_lossy' ),
-				'media',
-				'kraken_image_optimizer'
-			);
-
-			add_settings_field(
-				'kraken_auto_optimize',
-				'Automatically optimize uploads:',
-				array( &$this, 'show_auto_optimize' ),
-				'media',
-				'kraken_image_optimizer'
-			);
-
-			add_settings_field(
-				'kraken_show_reset',
-				'Show Reset field: <small class="krakenWhatsThis" title="Checking this option will add a Reset button in the Kraked Size column for each optimized image. Resetting an image will remove the metadata associated with it, effectively making your blog forget that it had been optimized in the first place, allowing further optimization.">what\'s this?</small>',
-				array( &$this, 'show_reset_field' ),
-				'media',
-				'kraken_image_optimizer'
-			);			
-
-			add_settings_field(
-				'bulk_async_limit',
-				'Bulk Concurrency: <small class="krakenWhatsThis" title="This settings defines how many images can be processed at the same time using the bulk optimizer. The recommended value is 4. For blogs on very small hosting plans, or with reduced connectivity, a lower number might be necessary to avoid hitting request limits.">what\'s this?</small>',				
-				array( &$this, 'show_bulk_async_limit' ),
-				'media',
-				'kraken_image_optimizer'
-			);
-
-			add_settings_field(
-				'credentials_valid',
-				'API status:',
-				array( &$this, 'show_credentials_validity' ),
-				'media',
-				'kraken_image_optimizer'
-			);
+			// add_settings_section( 'kraken_image_optimizer', 'Kraken Image Optimizer', array( &$this, 'show_kraken_image_optimizer' ), 'media' );
+			// register_setting(
+			// 	'media',
+			// 	'_kraken_options',
+			// 	array( &$this, 'validate_options' )
+			// );
 		}
 
 		function my_enqueue( $hook ) {
-			if ( $hook == 'options-media.php' || $hook == 'upload.php') {
+			if ( $hook == 'options-media.php' || $hook == 'upload.php' || $hook == 'settings_page_wp-krakenio' ) {
 				wp_enqueue_script( 'jquery' );
-				wp_enqueue_script( 'tipsy-js', plugins_url( '/js/jquery.tipsy.js', __FILE__ ), array( 'jquery' ) );
-				wp_enqueue_script( 'async-js', plugins_url( '/js/async.js', __FILE__ ) );
-				wp_enqueue_script( 'ajax-script', plugins_url( '/js/ajax.js', __FILE__ ), array( 'jquery' ) );
+				if ( KRAKEN_DEV_MODE === true ) {
+					wp_enqueue_script( 'async-js', plugins_url( '/js/async.js', __FILE__ ) );
+					wp_enqueue_script( 'tipsy-js', plugins_url( '/js/jquery.tipsy.js', __FILE__ ), array( 'jquery' ) );
+					wp_enqueue_script( 'modal-js', plugins_url( '/js/jquery.modal.min.js', __FILE__ ), array( 'jquery' ) );
+					wp_enqueue_script( 'ajax-script', plugins_url( '/js/ajax.js', __FILE__ ), array( 'jquery' ) );
+					wp_localize_script( 'ajax-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+					wp_localize_script( 'ajax-script', 'kraken_settings', $this->kraken_settings );
+				} else {
+					wp_enqueue_script( 'kraken-js', plugins_url( '/js/dist/kraken.min.js', __FILE__ ), array( 'jquery' ) );
+					wp_localize_script( 'kraken-js', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+					wp_localize_script( 'kraken-js', 'kraken_settings', $this->kraken_settings );										
+				}
 				wp_enqueue_style( 'kraken_admin_style', plugins_url( 'css/admin.css', __FILE__ ) );
 				wp_enqueue_style( 'tipsy-style', plugins_url( 'css/tipsy.css', __FILE__ ) );
 				wp_enqueue_style( 'modal-style', plugins_url( 'css/jquery.modal.css', __FILE__ ) );
-				wp_localize_script( 'ajax-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
-				wp_localize_script( 'ajax-script', 'kraken_settings', $this->kraken_settings );
-				wp_enqueue_script( 'modal-js', plugins_url( '/js/jquery.modal.min.js', __FILE__ ), array( 'jquery' ) );				
 			}
 		}
 
@@ -376,49 +504,6 @@ EOD;
 			echo '<a href="http://kraken.io" title="Visit Kraken.io Homepage">Kraken.io</a> API settings';
 		}
 
-		function validate_options( $input ) {
-			$valid = array();
-			$error = '';
-			$valid['api_lossy'] = $input['api_lossy'];
-			$valid['auto_optimize'] = isset( $input['auto_optimize'] )? 1 : 0;
-			$valid['show_reset'] = isset( $input['show_reset'] ) ? $input['show_reset'] : 0;
-			$valid['bulk_async_limit'] = isset( $input['bulk_async_limit'] ) ? $input['bulk_async_limit'] : 4;
-
-
-			if ( !function_exists( 'curl_exec' ) ) {
-				$error = 'cURL not available. Kraken Image Optimizer requires cURL in order to communicate with Kraken.io servers. <br /> Please ask your system administrator or host to install PHP cURL, or contact support@kraken.io for advice';
-			} else {
-				$status = $this->get_api_status( $input['api_key'], $input['api_secret'] );
-
-				if ( $status !== false ) {
-
-					if ( isset($status['active']) && $status['active'] === true ) {
-						if ( $status['plan_name'] === 'Developers' ) {
-							$error = 'Developer API credentials cannot be used with this plugin.';
-						} else {
-							$valid['api_key'] = $input['api_key'];
-							$valid['api_secret'] = $input['api_secret'];
-						}
-					} else {
-						$error = 'There is a problem with your credentials. Please check them from your Kraken.io account.';
-					}
-
-				} else {
-					$error = 'Please enter a valid Kraken.io API key and secret';
-				}				
-			}
-
-			if ( !empty( $error)  ) {
-				add_settings_error(
-					'media',
-					'api_key_error',
-					$error,
-					'error'
-				);
-			}
-			return $valid;
-		}
-
 		function show_api_key() {
 			$settings = $this->kraken_settings;
 			$value = isset( $settings['api_key'] ) ? $settings['api_key'] : '';
@@ -463,7 +548,7 @@ EOD;
 			$show_reset = isset( $options['show_reset'] ) ? $options['show_reset'] : 0;
 			?>
 			<input type="checkbox" id="show_reset" name="_kraken_options[show_reset]" value="1" <?php checked( 1, $show_reset, true ); ?>/>
-			&nbsp;&nbsp;&nbsp;&nbsp;<span class="kraken-reset-all enabled">Reset All Images</span>
+			<span class="kraken-reset-all enabled">Reset All Images</span>
 			<?php
 		}
 
@@ -475,7 +560,7 @@ EOD;
 				<?php foreach ( range(1, 10) as $number ) { ?>
 					<option value="<?php echo $number ?>" <?php selected( $bulk_limit, $number, true); ?>>
 						<?php echo $number ?>
-					</option><?php selected( $selected, $current, $echo); ?>
+					</option>
 				<?php } ?>
 			</select>
 			<?php
@@ -598,6 +683,10 @@ EOD;
 				"lossy" => $lossy,
 				"origin" => "wp"
 			);
+
+			// if ( $lossy && isset( $settings['quality'] ) ) {
+			// 	$params['quality'] = $settings['quality'];
+			// }
 
 			try { 
 				$data = $kraken->upload( $params ); 

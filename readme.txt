@@ -2,9 +2,9 @@
 Contributors: karim79
 Tags: Image Optimizer, Image Optimiser, Optimize, Optimise, Images, Media, Performance, SEO, faster loading times, smushit, smush.it, compress, kraken-image-optimizer, tinypng, tinyjpeg, pngquant, jpegmini, ewww, pagespeed, pagespeed insights, sitespeed, optimize gif, optimize jpeg, optimize png, optimize animated gif, svg, improve pagerank
 Requires at least: 3.0.1
-Tested up to: 4.1
+Tested up to: 4.2
 Donate link: https://kraken.io
-Stable tag: 1.0.8
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -27,17 +27,17 @@ Sign up for your [FREE Kraken.io Account](https://kraken.io/plans "Kraken.io - P
 
 
 = About the plugin =
+* You can use your Kraken API key and secret on as many sites/blogs as you like. We have no per-site license.
 * All images uploaded throught the media uploader are optimized on-the-fly. All generated thumbnails are optimized too.
 * All images already present in the media library can be optimized individually, or using the Bulk Action menu "Krak 'em all" feature.
 * This plugin does not require any root or command-line access. No compilation and installation of any binaries is necessary.
 * All optimization is carried out by sending images to Kraken.io's infrastructure, and pulling the optimized files to your Wordpress installation.
 * To use this plugin, you must obtain a full API key and secret from [https://kraken.io/plans](https://kraken.io/plans "Kraken.io - Plans and Pricing"). Our free account comes with a limited quota for testing our premium features, including this plugin.
-* You can use your Kraken API key and secret on as many sites/blogs as you like. We have no per-site license.
 * Works great with WPEngine hosted blogs, including the staging area.
 * Since version 1.0.4, the plugin will work with local WordPress installations; the client site does not need to be published on the web.
 
 
-Once you have obtained your credentials, from your Wordpress admin, go to the Settings->Media page. The Kraken Wordpress plugin adds a Kraken.io Settings section to the bottom of the page, from where you can enter your API credentials, and select your optimization preferences. Once you have done this, click **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick in the **Kraken.io settings** section. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
+Once you have obtained your credentials, from your Wordpress admin, go to the Kraken.io settings page. The from there you can enter your API credentials, and select your optimization preferences. Once you have done this, click on **Save**. If everything is in order, it will simply say "settings saved" and give you a reassuring green tick that your credentials are valid. You can now start optimizing images from within Media Library. Any image you upload from now on, through any of the media upload screens will be optimized on-the-fly by Kraken.
 
 For advanced users, there is a third party WordPress Command Line Interface (CLI) tool to allow image optimization from the command line, or by using cron. For details, visit: https://github.com/tillkruss/wp-cli-kraken 
 
@@ -93,6 +93,20 @@ You will need to switch the Media Library from the Thumbnail view to the List vi
 
 
 == Changelog ==
+
+= 2.0 =
+* Please read! Kraken.io settings have now moved to own section, in order to reduce clutter in Media Settings, and to accomodate new features on the way.
+* Advanced settings grouped in "Advanced Settings" section of settings page.
+* Direct link to Kraken.io settings from Kraken.io in the plugins sections.
+* Updated screenshots.
+* WordPress version compatibility bumped to 4.2.
+
+= 1.0.9.1 =
+* Fixed another reported bootstrap CSS conflict.
+
+= 1.0.9 =
+* Fixed potential conflict with Bootstrap Modal on blogs using Twitter Bootstrap.
+* Better bundling of scripts for faster loading of the plugin.
 
 = 1.0.8 =
 * Added the ability to control the number of images the bulk tool optimizes at once. The default settings of 4 is recommended. Blogs with limited resources, for example those on small shared hosting plans should try a lower value if they run into issues with bulk optimization. Blogs on larger hosting plans can experiment with higher values.
